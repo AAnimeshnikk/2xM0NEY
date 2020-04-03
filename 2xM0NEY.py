@@ -3,21 +3,19 @@ import telebot
 from telebot import types
 from SimpleQIWI import *
 from time import sleep
-import sqlite3
-import Token
 
 # Нужные данные
-admin = Token.admin
+admin = '@AAnimeshnikk'
 chat = 'https://t.me/twoxchat'
 news = 'https://t.me/twoxnews'
-id = Token.id # Твой ид, что-бы бот кидал тебе все, что происходит в боте
+id = '560083718' # Твой ид, что-бы бот кидал тебе все, что происходит в боте
 
 # Для киви апи
-token = Token.QIVY         # https://qiwi.com/api
-phone = Token.phone
+# token = ''         # https://qiwi.com/api
+# phone = ''
 
 # Апи бота, создаём переменную для управления ботом(отправки запросов на апи)
-bot = telebot.TeleBot(Token.TOKEN)
+bot = telebot.TeleBot('1072358209:AAHiQ__0NsNCsQEbld73xv25zjr-zGWATds')
 
 # Создаём переменную для id
 chat_id = ''
@@ -33,7 +31,7 @@ def main(message):
     btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt')
     btn2 = types.InlineKeyboardButton(text = 'Деньги💵', callback_data = 'money')
     btn3 = types.InlineKeyboardButton(text = 'Помощь🚑', callback_data = 'help')
-    btn4 = types.InlineKeyboardButton(text = 'Комнаты🏙\n(Фиксированые)', callback_data = 'rooms')
+    btn4 = types.InlineKeyboardButton(text = 'Комнаты🏙\n(Фиксированые)', callback_data = 'roomsfix')
     btn5 = types.InlineKeyboardButton(text = 'Комнаты🌆\n(Динамические)', callback_data = 'roomsunfix')
     markup.row(btn1, btn2)
     markup.row(btn4, btn5)
@@ -54,17 +52,6 @@ f'''
     disable_web_page_preview = True,
     reply_markup = markup
     )
-
-    conn = sqlite3.connect('2xM0NEY.db')
-    cursor = conn.cursor()
-    print('Запись')
-    cursor.execute(
-    '''CREATE TABLE IF NOT EXISTS users
-    (id INTEGER, name VARCHAR, link VARCHAR)''')
-    print('Записано...')
-    conn.commit()
-    conn.close()
-    print('закрыто')
 
 # Запускаем обработку кнопок
 @bot.callback_query_handler(func=lambda call: True)
@@ -99,16 +86,14 @@ def callback_inline(call):
 ''',
         reply_markup = markup)
 
-    # Возврат в меню
-
-    # Возврат в главное меню
+    # Переход в главное меню
     elif call.data == 'menu':
         # Повторяем всё из функции main()
         markup = types.InlineKeyboardMarkup()
         btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt')
         btn2 = types.InlineKeyboardButton(text = 'Деньги💵', callback_data = 'money')
         btn3 = types.InlineKeyboardButton(text = 'Помощь🚑', callback_data = 'help')
-        btn4 = types.InlineKeyboardButton(text = 'Комнаты🏙\n(Фиксированые)', callback_data = 'rooms')
+        btn4 = types.InlineKeyboardButton(text = 'Комнаты🏙\n(Фиксированые)', callback_data = 'roomsfix')
         btn5 = types.InlineKeyboardButton(text = 'Комнаты🌆\n(Динамические)', callback_data = 'roomsunfix')
         markup.row(btn1, btn2)
         markup.row(btn4, btn5)
@@ -146,12 +131,6 @@ f'''
 
     # Депозит
     elif call.data == 'deposit':
-        try:
-            api = QApi(token=token, phone=phone)
-            api.stop()    # Отключаем приём платежей если они включены
-        except:
-            bot.send_message(id, "ОШИБКА С КИВИ АПИ")
-
         markup = types.InlineKeyboardMarkup()
         btn = types.InlineKeyboardButton(text = '15 руб', callback_data = '15r')
         btn1 = types.InlineKeyboardButton(text = '30 руб', callback_data = '30r')
@@ -170,58 +149,70 @@ f'''
         markup.row(btn6,btn7)
         markup.row(btn8,btn9)
         markup.row(back)
+
         bot.edit_message_text(chat_id = call.message.chat.id,
         message_id = call.message.message_id,
         text ='Выберите сумму для пополнения баланса : ',
         reply_markup = markup)
 
-    # 15 руб
-    elif call.data == '15r':
-        message = call.message
+    # Аккаунт
+    elif call.data == 'accaunt':
+        show_nickname = '✅'
         markup = types.InlineKeyboardMarkup()
-        btn = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'deposit')
-        markup.add(btn)
+        btn = types.InlineKeyboardButton(text = f'Показывать ник {show_nickname}', callback_data = 'show_nicknamebtn')
 
-        api = QApi(token=token, phone=phone)
+        back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
 
-        price = 15                  # Минимальное значение при котором счет будет считаться закрытым
-        comment = api.bill(price)   # Создаем счет. Комментарий с которым должен быть платеж генерируется автоматически, но его можно задать                                 # параметром comment. Валютой по умолчанию считаются рубли, но ее можно изменить параметром currency
+    # Меню фиксированных комнат
+    elif call.data == 'roomsfix':
+        markup = types.InlineKeyboardMarkup()
+        btn = types.InlineKeyboardButton(text = '[0:10] 15 руб №1', callback_data = 'roomfix1')
+        btn1 = types.InlineKeyboardButton(text = '[0:10] 15 руб №2', callback_data = 'roomfix2')
+        btn2 = types.InlineKeyboardButton(text = '[0:10] 30 руб №3', callback_data = 'roomfix3')
+        btn3 = types.InlineKeyboardButton(text = '[0:10] 50 руб №4', callback_data = 'roomfix4')
+        btn4 = types.InlineKeyboardButton(text = '[0:10] 100 руб №5', callback_data = 'roomfix5')
+        btn5 = types.InlineKeyboardButton(text = '[0:10] 250 руб №6', callback_data = 'roomfix6')
+        btn6 = types.InlineKeyboardButton(text = '[0:10] 500 руб №7', callback_data = 'roomfix7')
+        btn7 = types.InlineKeyboardButton(text = '[0:10] 1000 руб №8', callback_data = 'roomfix8')
+        btn8 = types.InlineKeyboardButton(text = '[0:10] 2500 руб №9', callback_data = 'roomfix9')
+        btn9 = types.InlineKeyboardButton(text = '[0:10] 5000 руб №10', callback_data = 'roomfix10')
 
-        bot.send_message(id, str(message.chat.first_name) + " [ "+ str(message.chat.id)+f" ] | Оплачивает {price} руб")
+        back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
 
-        bot.edit_message_text(chat_id = call.message.chat.id,
-        message_id = call.message.message_id,
-        text = "Переведите %i рублей на счет %s с комментарием '%s' (только без кавычек)" % (price, phone, comment),
-        reply_markup = markup)
+        markup.row(btn,btn1)
+        markup.row(btn2,btn3)
+        markup.row(btn4, btn5)
+        markup.row(btn6,btn7)
+        markup.row(btn8,btn9)
+        markup.row(back)
 
-        try:
-            api.start()                 # Начинаем прием платежей
-        except:
-            bot.send_message(id, "ОШИБКА С КИВИ АПИ")
-            markup = types.InlineKeyboardMarkup()
-            btn = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'deposit')
-            markup.add(btn)
-            bot.edit_message_text(chat_id = call.message.chat.id,
-            message_id = call.message.message_id,
-            text = "Простите, но произошла ошибка с qiwi api, бот уже сообщил администратору :3\nПопробуйте пожалуйста позже...",
-            reply_markup = markup)
+        bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+        text = 'Выберите комнату :', reply_markup = markup)
 
-        while True:
-            if api.check(comment):  # Проверяем статус
-                bot.answer_callback_query(callback_query_id=cmd.id, text="Платёж успешно получен!\nМожете тажимать \"Продолжить🔙\"", show_alert=True)
-                markup = types.InlineKeyboardMarkup()
-                btn = types.InlineKeyboardButton(text = 'Продолжить🔙', callback_data = 'deposit')
-                markup.add(btn)
-                bot.edit_message_text(chat_id = call.message.chat.id,
-                message_id = call.message.message_id,
-                text = "Готово! Деньги на вашем счёте!",
-                reply_markup = markup)
-                bot.send_message(id, str(message.chat.first_name) + " [ "+ str(message.chat.id)+f" ] | Оплатил {price} руб")
-                break
+    elif call.data == 'roomsunfix':
+        markup = types.InlineKeyboardMarkup()
+        btn = btn = types.InlineKeyboardButton(text = '[0:10] 15 руб №1', callback_data = 'roomunfix1')
+        btn1 = types.InlineKeyboardButton(text = '[0:10] 15 руб №2', callback_data = 'roomunfix2')
+        btn2 = types.InlineKeyboardButton(text = '[0:10] 30 руб №3', callback_data = 'roomunfix3')
+        btn3 = types.InlineKeyboardButton(text = '[0:10] 50 руб №4', callback_data = 'roomunfix4')
+        btn4 = types.InlineKeyboardButton(text = '[0:10] 100 руб №5', callback_data = 'roomunfix5')
+        btn5 = types.InlineKeyboardButton(text = '[0:10] 250 руб №6', callback_data = 'roomunfix6')
+        btn6 = types.InlineKeyboardButton(text = '[0:10] 500 руб №7', callback_data = 'roomunfix7')
+        btn7 = types.InlineKeyboardButton(text = '[0:10] 1000 руб №8', callback_data = 'roomunfix8')
+        btn8 = types.InlineKeyboardButton(text = '[0:10] 2500 руб №9', callback_data = 'roomunfix9')
+        btn9 = types.InlineKeyboardButton(text = '[0:10] 5000 руб №10', callback_data = 'roomunfix10')
 
-            sleep(1)
+        back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
 
-        api.stop()                  # Останавливаем прием платежей
+        markup.row(btn,btn1)
+        markup.row(btn2,btn3)
+        markup.row(btn4, btn5)
+        markup.row(btn6,btn7)
+        markup.row(btn8,btn9)
+        markup.row(back)
 
+        bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+        text = 'Выберите комнату :', reply_markup = markup)
+        
 # Включаем цикл для бота
 bot.polling(none_stop = True)

@@ -30,18 +30,24 @@ def main(message):
 
     acc_name = message.from_user.username
 
-    if acc_name == None:
+    userindatabase = acc.AccountExistsByID(chat_id)
+    if userindatabase == False and acc_name == None:
         unk = 'Unknown№' + chat_id
         acc.CreateNewAccount(chat_id, 'Unknown№')
         acc.SetAccountDataElement(chat_id, "acc_showRealName", "False")
-        bot.send_message(chat_id, 'Введите желаемое имя пользователя : ')
-        @bot.message_handler(commands=['start', 'help'])
+        bot.send_message(chat_id, 'Введите желаемое имя пользователя (до 30 символов) : ')
+        get_uname()
+        def get_uname():
+            @bot.message_handler(func=lambda message: True, content_types=['text'])
+            def input_username(message):
+                if len(message.text) < 30:
+                acc.SetAccountDataElement(chat_id, 'acc_username', message.text)
+                else:
+                    bot.send_message(chat_id, 'Слишком много символов, максимальное количество символов = 30 : ')
+                    get_uname()
 
-
-
-    acc_name = '@' + message.from_user.username
-    userindatabase = acc.AccountExistsByID(chat_id)
-    if userindatabase == False:
+    elif userindatabase == False:
+        acc_name = '@' + message.from_user.username
         acc.CreateNewAccount(message.from_user.id, acc_name)
 
     bot.delete_message(message.from_user.id, message.message_id) # Удаляем сообщение с командой /start

@@ -33,7 +33,8 @@ def main(message):
     if acc_name == None:
         acc.CreateNewAccount(chat_id, 'Unknown')
         acc.SetAccountDataElement(chat_id, "acc_showRealName", "False")
-        bot.send_message()
+        bot.send_message(chat_id, 'Введите желаемое имя пользователя : ')
+        @bot.message_handler(commands=['start', 'help'])
 
 
 

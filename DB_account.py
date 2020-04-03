@@ -1,7 +1,5 @@
 from DB_connector import *
 
-
-#GET BLOCK
 def AccountExistsByID(acc_id):
     data.execute("SELECT acc_id FROM Accounts WHERE acc_id = '%s'" % acc_id) # command for sql
     accountExists = data.fetchall() # result

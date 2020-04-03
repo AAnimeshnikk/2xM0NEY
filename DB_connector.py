@@ -26,6 +26,11 @@ database = mysql.connector.connect( # connecting to database
 
 data = database.cursor() # get database data
 
+acc_id = "acc_id"
+acc_name = "acc_name"
+acc_username = "acc_usrname"
+acc_showRealName = "acc_showRealName"
+acc_balance = "acc_balance"
 
 
 '''DONT CHANGE THIS FILE'''

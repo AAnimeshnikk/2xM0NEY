@@ -10,8 +10,6 @@ def AccountExistsByID(acc_id):
     else:
         return False
 
-print(AccountExistsByID("0"))
-
 def GetAccountDataByID(acc_id):
     data.execute("SELECT * FROM Accounts WHERE acc_id = '%s'" % acc_id) # command for sql
     try:
@@ -26,21 +24,14 @@ def GetAccountDataByID(acc_id):
         raise ValueError("unknown id: '%s'" % acc_id)
     return accountData
 
-print(GetAccountDataByID("-1"))
-
 def CreateNewAccount(acc_id, acc_name): # create new account for user
     data.execute("INSERT INTO Accounts(acc_id, acc_name, acc_username, acc_showRealName, acc_balance) VALUES('%s', '%s', 'Unknown', 'TRUE', '0')"
                  % (acc_id, acc_name))
     database.commit()
 
-CreateNewAccount("-2", "Animeshnik")
-
 def SetAccountDataElement(acc_id, element, value): # update the database elementt o value by acc_id
     data.execute("UPDATE Accounts SET %s = '%s' WHERE acc_id = %s" % (element, value, acc_id))
     database.commit()
-
-SetAccountDataElement("-1", "acc_balance", "999999")
-SetAccountDataElement("-2", "acc_balance", "999999")
 
 
 

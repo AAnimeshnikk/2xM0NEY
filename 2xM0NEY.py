@@ -26,14 +26,13 @@ chat_id = ''
 # Заставляем бота мониторить чат на наличие команды /start
 @bot.message_handler(commands=['start'])
 def reg(message):
-    print('1')
     chat_id = message.from_user.id # Узнаём айди юзера и записываем в переменную
 
     acc_name = message.from_user.username
 
     userindatabase = acc.AccountExistsByID(chat_id)
     if userindatabase == False and acc_name == None:
-        print('2')
+
         unk = 'Unknown№' + str(chat_id)
         acc.CreateNewAccount(chat_id, unk)
         acc.SetAccountDataElement(chat_id, "acc_showRealName", "False")
@@ -53,6 +52,7 @@ def reg(message):
     elif userindatabase == False:
         acc_name = '@' + message.from_user.username
         acc.CreateNewAccount(message.from_user.id, acc_name)
+        main(message)
 
     def main(message):
         # Добавляем клавиатуру и кнопки

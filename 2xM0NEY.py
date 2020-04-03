@@ -1,8 +1,11 @@
 # Импортируем нужные библиотеки
 import telebot
 from telebot import types
-from SimpleQIWI import *
 from time import sleep
+import DB_account as acc
+import random
+
+
 
 # Нужные данные
 admin = '@AAnimeshnikk'
@@ -23,6 +26,10 @@ chat_id = ''
 # Заставляем бота мониторить чат на наличие команды /start
 @bot.message_handler(commands=['start'])
 def main(message):
+    userindatabase = acc.AccountExistsByID(message.from_user.id)
+    if userindatabase == False:
+        acc.CreateNewAccount(message.from_user.id, message.from_user.username)
+        
     chat_id = message.from_user.id # Узнаём айди юзера и записываем в переменную
     bot.delete_message(message.from_user.id, message.message_id) # Удаляем сообщение с командой /start
 

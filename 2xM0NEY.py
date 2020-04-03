@@ -36,24 +36,26 @@ def reg(message):
                 acc.SetAccountDataElement(chat_id, 'acc_username', message.text)
                 main(message)
             else:
+                chat_id = message.from_user.id
                 bot.send_message(chat_id, 'Слишком много символов, максимальное количество символов = 30 : ')
                 get_uname()
     userindatabase = acc.AccountExistsByID(chat_id)
     if userindatabase == False and acc_name == None:
-        unk = 'Unknown№' + str(chat_id)
-        acc.CreateNewAccount(chat_id, unk)
-        acc.SetAccountDataElement(chat_id, "acc_username", unk)
+        chat_id = message.from_user.id
+        acc.CreateNewAccount(chat_id, 'Unknown' + str(chat_id))
+        acc.SetAccountDataElement(chat_id, "acc_username", 'Unknown' + str(chat_id))
         acc.SetAccountDataElement(chat_id, "acc_showRealName", "False")
         bot.send_message(chat_id, 'Введите желаемое имя пользователя (до 30 символов) : ')
         get_uname()
 
     elif userindatabase == False:
-        unk = 'Unknown№' + str(chat_id)
-        acc.SetAccountDataElement(chat_id, "acc_username", unk)
+        chat_id = message.from_user.id
+        acc.SetAccountDataElement(chat_id, "acc_username", 'Unknown' + str(chat_id))
         acc_name = '@' + message.from_user.username
         acc.CreateNewAccount(message.from_user.id, acc_name)
         main(message)
     elif userindatabase == True:
+        chat_id = message.from_user.id
         main(message)
 
 def main(message):

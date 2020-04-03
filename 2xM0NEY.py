@@ -38,15 +38,15 @@ def reg(message):
         acc.SetAccountDataElement(chat_id, "acc_showRealName", "False")
         bot.send_message(chat_id, 'Введите желаемое имя пользователя (до 30 символов) : ')
         get_uname()
-        def get_uname():
-            @bot.message_handler(func=lambda message: True, content_types=['text'])
-            def input_username(message):
-                if len(message.text) < 30:
-                    acc.SetAccountDataElement(chat_id, 'acc_username', message.text)
-                    main(message)
-                else:
-                    bot.send_message(chat_id, 'Слишком много символов, максимальное количество символов = 30 : ')
-                    get_uname()
+    def get_uname():
+        @bot.message_handler(func=lambda message: True, content_types=['text'])
+        def input_username(message):
+            if len(message.text) < 30:
+                acc.SetAccountDataElement(chat_id, 'acc_username', message.text)
+                main(message)
+            else:
+                bot.send_message(chat_id, 'Слишком много символов, максимальное количество символов = 30 : ')
+                get_uname()
 
     elif userindatabase == False:
         unk = 'Unknown№' + str(chat_id)

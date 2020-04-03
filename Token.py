@@ -1,0 +1,5 @@
+TOKEN = '1072358209:AAHiQ__0NsNCsQEbld73xv25zjr-zGWATds'
+QIVY = "982e8c3e071b3776b916c6359f8d4999"
+phone = "380999260280"
+id = "560083718"
+admin = '@AAnimeshnikk'

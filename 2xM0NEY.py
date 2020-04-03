@@ -26,12 +26,14 @@ chat_id = ''
 # Заставляем бота мониторить чат на наличие команды /start
 @bot.message_handler(commands=['start'])
 def reg(message):
+    print('1')
     chat_id = message.from_user.id # Узнаём айди юзера и записываем в переменную
 
     acc_name = message.from_user.username
 
     userindatabase = acc.AccountExistsByID(chat_id)
-    if userindatabase == False and acc_name == None:
+    if userindatabase == 'False' and acc_name == 'None':
+        print('2')
         unk = 'Unknown№' + str(chat_id)
         acc.CreateNewAccount(chat_id, unk)
         acc.SetAccountDataElement(chat_id, "acc_showRealName", "False")
@@ -40,6 +42,7 @@ def reg(message):
         def get_uname():
             @bot.message_handler(func=lambda message: True, content_types=['text'])
             def input_username(message):
+                print('3')
                 if len(message.text) < 30:
                     acc.SetAccountDataElement(chat_id, 'acc_username', message.text)
                     main(message)
@@ -47,7 +50,7 @@ def reg(message):
                     bot.send_message(chat_id, 'Слишком много символов, максимальное количество символов = 30 : ')
                     get_uname()
 
-    elif userindatabase == False:
+    elif userindatabase == 'False':
         acc_name = '@' + message.from_user.username
         acc.CreateNewAccount(message.from_user.id, acc_name)
 

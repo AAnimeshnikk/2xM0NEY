@@ -26,10 +26,11 @@ chat_id = ''
 # Заставляем бота мониторить чат на наличие команды /start
 @bot.message_handler(commands=['start'])
 def main(message):
+    acc_name = '@' + message.from_user.username
     userindatabase = acc.AccountExistsByID(message.from_user.id)
     if userindatabase == False:
-        acc.CreateNewAccount(message.from_user.id, message.from_user.username)
-        
+        acc.CreateNewAccount(message.from_user.id, acc_name)
+
     chat_id = message.from_user.id # Узнаём айди юзера и записываем в переменную
     bot.delete_message(message.from_user.id, message.message_id) # Удаляем сообщение с командой /start
 

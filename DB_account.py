@@ -8,6 +8,13 @@ def AccountExistsByID(acc_id):
     else:
         return False
 
+def UsernameExists(username):
+    data.execute("SELECT acc_username FROM Accounts WHERE acc_username = '%s'" % username)
+    if len(data.fetchall()) == 0:
+        return False
+    else:
+        return True
+
 def GetAccountDataByID(acc_id):
     data.execute("SELECT * FROM Accounts WHERE acc_id = '%s'" % acc_id) # command for sql
     try:
@@ -30,6 +37,7 @@ def CreateNewAccount(acc_id, acc_name): # create new account for user
 def SetAccountDataElement(acc_id, element, value): # update the database elementt o value by acc_id
     data.execute("UPDATE Accounts SET %s = '%s' WHERE acc_id = %s" % (element, value, acc_id))
     database.commit()
+
 
 
 

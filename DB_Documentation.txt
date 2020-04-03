@@ -1,9 +1,15 @@
-﻿import DB_account as acc
+Кароче
+Нахой
+АМЕЛА ВІЗ Е КОКО
+
+import DB_account as acc
 
 acc.AccountExistsByID(acc_id) - повертає True, якщо користувач з айді acc_id є в базі, False якщо ні
 
 acc.GetAccountDataByID(acc_id) - повертає інформацію про користувача з айді acc_id, в вигляді
     {"acc_id": "", "acc_name": "", "acc_username": "", "acc_showRealName": "", "acc_balance": ""}
+
+acc.UsernameExists(username) - повертає True якщо є такий нік ніга, False якщо ще не має
 
 acc.CreateNewAccount(acc_id, acc_name) - створює аккаунт користувача з айди acc_id аккаунт з головним ніком acc_name, все остальне по нулям
 

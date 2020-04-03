@@ -32,7 +32,7 @@ def reg(message):
     acc_name = message.from_user.username
 
     userindatabase = acc.AccountExistsByID(chat_id)
-    if userindatabase == 'False' and acc_name == 'None':
+    if userindatabase == False and acc_name == None:
         print('2')
         unk = 'Unknown№' + str(chat_id)
         acc.CreateNewAccount(chat_id, unk)

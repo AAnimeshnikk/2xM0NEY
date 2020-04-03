@@ -213,6 +213,6 @@ f'''
 
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
         text = 'Выберите комнату :', reply_markup = markup)
-        
+
 # Включаем цикл для бота
 bot.polling(none_stop = True)

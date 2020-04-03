@@ -50,7 +50,7 @@ def reg(message):
                     bot.send_message(chat_id, 'Слишком много символов, максимальное количество символов = 30 : ')
                     get_uname()
 
-    elif userindatabase == 'False':
+    elif userindatabase == False:
         acc_name = '@' + message.from_user.username
         acc.CreateNewAccount(message.from_user.id, acc_name)
 

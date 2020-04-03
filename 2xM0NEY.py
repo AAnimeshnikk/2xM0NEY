@@ -32,8 +32,8 @@ def reg(message):
 
     userindatabase = acc.AccountExistsByID(chat_id)
     if userindatabase == False and acc_name == None:
-        unk = 'Unknown№' + chat_id
-        acc.CreateNewAccount(chat_id, 'Unknown№')
+        unk = 'Unknown№' + str(chat_id)
+        acc.CreateNewAccount(chat_id, unk)
         acc.SetAccountDataElement(chat_id, "acc_showRealName", "False")
         bot.send_message(chat_id, 'Введите желаемое имя пользователя (до 30 символов) : ')
         get_uname()
@@ -52,32 +52,32 @@ def reg(message):
         acc.CreateNewAccount(message.from_user.id, acc_name)
 
     def main(message):
-    # Добавляем клавиатуру и кнопки
-    markup = types.InlineKeyboardMarkup()
-    btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt')
-    btn2 = types.InlineKeyboardButton(text = 'Деньги💵', callback_data = 'money')
-    btn3 = types.InlineKeyboardButton(text = 'Помощь🚑', callback_data = 'help')
-    btn4 = types.InlineKeyboardButton(text = 'Комнаты🏙\n(Фиксированые)', callback_data = 'roomsfix')
-    btn5 = types.InlineKeyboardButton(text = 'Комнаты🌆\n(Динамические)', callback_data = 'roomsunfix')
-    markup.row(btn1, btn2)
-    markup.row(btn4, btn5)
-    markup.row(btn3)
+        # Добавляем клавиатуру и кнопки
+        markup = types.InlineKeyboardMarkup()
+        btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt')
+        btn2 = types.InlineKeyboardButton(text = 'Деньги💵', callback_data = 'money')
+        btn3 = types.InlineKeyboardButton(text = 'Помощь🚑', callback_data = 'help')
+        btn4 = types.InlineKeyboardButton(text = 'Комнаты🏙\n(Фиксированые)', callback_data = 'roomsfix')
+        btn5 = types.InlineKeyboardButton(text = 'Комнаты🌆\n(Динамические)', callback_data = 'roomsunfix')
+        markup.row(btn1, btn2)
+        markup.row(btn4, btn5)
+        markup.row(btn3)
 
-    # Отправляем сообщение с кнопками
-    bot.send_message(chat_id,
-f'''
-⭕️Главное меню :
+        # Отправляем сообщение с кнопками
+        bot.send_message(chat_id,
+    f'''
+    ⭕️Главное меню :
 
-👮‍♂️Администратор : {admin}
-💬Чат : {chat}
-👁Новости : {news}
+    👮‍♂️Администратор : {admin}
+    💬Чат : {chat}
+    👁Новости : {news}
 
-Нажмите \"Помощь🚑\" для отображения инструкции.
-Приятой игры!
-''',
-    disable_web_page_preview = True,
-    reply_markup = markup
-    )
+    Нажмите \"Помощь🚑\" для отображения инструкции.
+    Приятой игры!
+    ''',
+        disable_web_page_preview = True,
+        reply_markup = markup
+        )
 
 # Запускаем обработку кнопок
 @bot.callback_query_handler(func=lambda call: True)

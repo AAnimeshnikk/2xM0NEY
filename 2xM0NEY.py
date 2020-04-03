@@ -25,7 +25,7 @@ chat_id = ''
 
 # Заставляем бота мониторить чат на наличие команды /start
 @bot.message_handler(commands=['start'])
-def main(message):
+def reg(message):
     chat_id = message.from_user.id # Узнаём айди юзера и записываем в переменную
 
     acc_name = message.from_user.username
@@ -41,7 +41,8 @@ def main(message):
             @bot.message_handler(func=lambda message: True, content_types=['text'])
             def input_username(message):
                 if len(message.text) < 30:
-                acc.SetAccountDataElement(chat_id, 'acc_username', message.text)
+                    acc.SetAccountDataElement(chat_id, 'acc_username', message.text)
+                    main(message)
                 else:
                     bot.send_message(chat_id, 'Слишком много символов, максимальное количество символов = 30 : ')
                     get_uname()
@@ -50,8 +51,7 @@ def main(message):
         acc_name = '@' + message.from_user.username
         acc.CreateNewAccount(message.from_user.id, acc_name)
 
-    bot.delete_message(message.from_user.id, message.message_id) # Удаляем сообщение с командой /start
-
+    def main(message):
     # Добавляем клавиатуру и кнопки
     markup = types.InlineKeyboardMarkup()
     btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt')

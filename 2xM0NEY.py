@@ -53,6 +53,8 @@ def reg(message):
         acc_name = '@' + message.from_user.username
         acc.CreateNewAccount(message.from_user.id, acc_name)
         main(message)
+    elif userindatabase == True:
+        main(message)
 
     def main(message):
         # Добавляем клавиатуру и кнопки

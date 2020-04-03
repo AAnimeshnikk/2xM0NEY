@@ -33,6 +33,7 @@ def reg(message):
         @bot.message_handler(func=lambda message: True, content_types=['text'])
         def input_username(message):
             if len(message.text) < 30:
+                chat_id = message.from_user.id
                 acc.SetAccountDataElement(chat_id, 'acc_username', message.text)
                 main(message)
             else:

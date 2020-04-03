@@ -26,6 +26,7 @@ chat_id = ''
 # Заставляем бота мониторить чат на наличие команды /start
 @bot.message_handler(commands=['start'])
 def reg(message):
+    global chat_id
     chat_id = message.from_user.id # Узнаём айди юзера и записываем в переменную
 
     acc_name = message.from_user.username
@@ -56,20 +57,21 @@ def reg(message):
     elif userindatabase == True:
         main(message)
 
-    def main(message):
-        # Добавляем клавиатуру и кнопки
-        markup = types.InlineKeyboardMarkup()
-        btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt')
-        btn2 = types.InlineKeyboardButton(text = 'Деньги💵', callback_data = 'money')
-        btn3 = types.InlineKeyboardButton(text = 'Помощь🚑', callback_data = 'help')
-        btn4 = types.InlineKeyboardButton(text = 'Комнаты🏙\n(Фиксированые)', callback_data = 'roomsfix')
-        btn5 = types.InlineKeyboardButton(text = 'Комнаты🌆\n(Динамические)', callback_data = 'roomsunfix')
-        markup.row(btn1, btn2)
-        markup.row(btn4, btn5)
-        markup.row(btn3)
+def main(message):
+    global chat_id
+    # Добавляем клавиатуру и кнопки
+    markup = types.InlineKeyboardMarkup()
+    btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt')
+    btn2 = types.InlineKeyboardButton(text = 'Деньги💵', callback_data = 'money')
+    btn3 = types.InlineKeyboardButton(text = 'Помощь🚑', callback_data = 'help')
+    btn4 = types.InlineKeyboardButton(text = 'Комнаты🏙\n(Фиксированые)', callback_data = 'roomsfix')
+    btn5 = types.InlineKeyboardButton(text = 'Комнаты🌆\n(Динамические)', callback_data = 'roomsunfix')
+    markup.row(btn1, btn2)
+    markup.row(btn4, btn5)
+    markup.row(btn3)
 
-        # Отправляем сообщение с кнопками
-        bot.send_message(chat_id,
+    # Отправляем сообщение с кнопками
+    bot.send_message(chat_id,
     f'''
     ⭕️Главное меню :
 

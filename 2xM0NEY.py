@@ -28,21 +28,19 @@ chat_id = ''
 def reg(message):
     global chat_id
     chat_id = message.from_user.id # Узнаём айди юзера и записываем в переменную
-
     acc_name = message.from_user.username
 
     userindatabase = acc.AccountExistsByID(chat_id)
     if userindatabase == False and acc_name == None:
-
         unk = 'Unknown№' + str(chat_id)
         acc.CreateNewAccount(chat_id, unk)
+        acc.SetAccountDataElement(chat_id, "acc_username", unk)
         acc.SetAccountDataElement(chat_id, "acc_showRealName", "False")
         bot.send_message(chat_id, 'Введите желаемое имя пользователя (до 30 символов) : ')
         get_uname()
         def get_uname():
             @bot.message_handler(func=lambda message: True, content_types=['text'])
             def input_username(message):
-                print('3')
                 if len(message.text) < 30:
                     acc.SetAccountDataElement(chat_id, 'acc_username', message.text)
                     main(message)
@@ -51,6 +49,8 @@ def reg(message):
                     get_uname()
 
     elif userindatabase == False:
+        unk = 'Unknown№' + str(chat_id)
+        acc.SetAccountDataElement(chat_id, "acc_username", unk)
         acc_name = '@' + message.from_user.username
         acc.CreateNewAccount(message.from_user.id, acc_name)
         main(message)

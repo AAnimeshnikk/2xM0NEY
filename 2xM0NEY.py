@@ -189,6 +189,7 @@ f'''
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
         text = 'Выберите комнату :', reply_markup = markup)
 
+    # Динамические комнаты
     elif call.data == 'roomsunfix':
         markup = types.InlineKeyboardMarkup()
         btn = btn = types.InlineKeyboardButton(text = '[0:10] 15 руб №1', callback_data = 'roomunfix1')

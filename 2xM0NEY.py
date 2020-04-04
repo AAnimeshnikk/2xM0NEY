@@ -26,16 +26,24 @@ def reg(message):
     userindatabase = acc.AccountExistsByID(message.from_user.id)
 
     if userindatabase == False and message.from_user.username == None:
-        bot.send_message(message.from_user.id, 'Введите желаемое имя пользователя (до 30 символов) : ')
+        bot.send_message(message.from_user.id,
+'''
+У вас нету Telegram UserName, поетому бот будет использовать ваши имя и фамилию.
+Если среди учасников уже есть человек с такими именем и фамилией бот добавит ваш в конец вашей фамилии ваш telegram id
+''')
+        showed_name = message.from_user.firstname + ' ' + message.from_user.lastname
 
-
+        if acc.UsernameExists(showed_name) == True:
+            showed_name += message.from_user.id
 
     elif userindatabase == False:
         unk = 'Unknown' + str(message.from_user.id)
-        acc.SetAccountDataElement(message.from_user.id, "acc_username", unk)
         acc_name = '@' + message.from_user.username
         acc.CreateNewAccount(message.from_user.id, acc_name)
+        acc.SetAccountDataElement(message.from_user.id, "acc_username", unk)
         main(message)
+
+
     elif userindatabase == True:
         i = acc.GetAccountDataByID(message.from_user.id)['acc_name']
         if i[:7] == 'Unknown':

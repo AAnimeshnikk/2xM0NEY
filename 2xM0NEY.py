@@ -8,7 +8,7 @@ import random
 
 
 # Нужные данные
-admin = '@AAnimeshnikk'
+admin = '@AAnimeshnikk'# добавиш @pypcdev пізніше ок?
 chat = 'https://t.me/twoxchat'
 news = 'https://t.me/twoxnews'
 id = '560083718' # Твой ид, что-бы бот кидал тебе все, что происходит в боте
@@ -20,35 +20,14 @@ id = '560083718' # Твой ид, что-бы бот кидал тебе все,
 # Апи бота, создаём переменную для управления ботом(отправки запросов на апи)
 bot = telebot.TeleBot('1072358209:AAHiQ__0NsNCsQEbld73xv25zjr-zGWATds')
 
-# Создаём переменную для id
-chat_id = ''
-
 # Заставляем бота мониторить чат на наличие команды /start
 @bot.message_handler(commands=['start'])
 def reg(message):
-    global chat_id
-    chat_id = message.from_user.id # Узнаём айди юзера и записываем в переменную
-    acc_name = message.from_user.username
-
-    def get_uname():
-        @bot.message_handler(func=lambda message: True, content_types=['text'])
-        def input_username(message):
-            if len(message.text) < 30:
-                unk = 'Unknown' + str(message.from_user.id)
-                acc.CreateNewAccount(message.from_user.id, unk)
-                acc.SetAccountDataElement(message.from_user.id, "acc_username", unk)
-                acc.SetAccountDataElement(message.from_user.id, "acc_showRealName", "False")
-                acc.SetAccountDataElement(message.from_user.id, 'acc_username', message.text)
-                main(message)
-            else:
-                bot.send_message(message.from_user.id, 'Слишком много символов, максимальное количество символов = 30 : ')
-                get_uname()
-
     userindatabase = acc.AccountExistsByID(message.from_user.id)
 
-    if userindatabase == False and acc_name == None:
+    if userindatabase == False and message.from_user.username == None:
         bot.send_message(message.from_user.id, 'Введите желаемое имя пользователя (до 30 символов) : ')
-        get_uname()
+
 
 
     elif userindatabase == False:
@@ -275,59 +254,6 @@ f'''
 
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
         text = 'Выберите комнату :', reply_markup = markup)
-
-    # Показывать Telegram UserName
-    elif call.data == 'show_nicknamebtnon':
-        if acc.GetAccountDataByID(call.message.chat.id)['acc_name'] != None:
-            unk = 'Unknown' + str(call.message.chat.id)
-            acc.SetAccountDataElement(call.message.chat.id, "acc_username", unk)
-            acc.SetAccountDataElement(call.message.chat.id, "acc_showRealName", "True")
-            markup = types.InlineKeyboardMarkup()
-            btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt')
-            btn2 = types.InlineKeyboardButton(text = 'Деньги💵', callback_data = 'money')
-            btn3 = types.InlineKeyboardButton(text = 'Помощь🚑', callback_data = 'help')
-            btn4 = types.InlineKeyboardButton(text = 'Комнаты🏙\n(Фиксированые)', callback_data = 'roomsfix')
-            btn5 = types.InlineKeyboardButton(text = 'Комнаты🌆\n(Динамические)', callback_data = 'roomsunfix')
-            markup.row(btn1, btn2)
-            markup.row(btn4, btn5)
-            markup.row(btn3)
-
-            bot.answer_callback_query(call.id, show_alert=True,
-            text="Имя пользователя успешно изменено")
-
-            # Отправляем сообщение с кнопками
-            bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-            text = f'''
-⭕️Главное меню :
-
-👮‍♂️Администратор : {admin}
-💬Чат : {chat}
-👁Новости : {news}
-
-Нажмите \"Помощь🚑\" для отображения инструкции.
-Приятой игры!
-            ''',
-                disable_web_page_preview = True,
-                reply_markup = markup
-                )
-        else:
-            bot.answer_callback_query(call.id, show_alert=True,
-            text="У вас нету Telegram NickName. Добавте его в настройках телеграм профиля и перезапустите бота, написав /start")
-
-    # Показывать пользовательское имя пользователя
-    elif call.data == 'show_nicknamebtnoff':
-        bot.send_message(call.message.chat.id, 'Введите новое имя пользователя (до 30 символов) : ')
-        @bot.message_handler(func=lambda message: True, content_types=['text'])
-        def edit_username(message):
-            if len(message.text) < 30:
-                acc.SetAccountDataElement(call.message.chat.id, "acc_showRealName", "False")
-                acc.SetAccountDataElement(call.message.chat.id, 'acc_username', message.text)
-                bot.answer_callback_query(call.id, show_alert=True,
-                text="Имя пользователя успешно изменено")
-                main(message)
-            else:
-                bot.send_message(call.message.chat.id, 'Слишком много символов, максимальное количество символов = 30 : ')
-                edit_username()
 
 # Включаем цикл для бота
 bot.polling(none_stop = True)

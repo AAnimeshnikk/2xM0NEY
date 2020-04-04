@@ -31,18 +31,18 @@ def reg(message):
 У вас нету Telegram UserName, поетому бот будет использовать ваши имя и фамилию.
 Если среди учасников уже есть человек с такими именем и фамилией бот добавит ваш в конец вашей фамилии ваш telegram id
 ''')
-        showed_name = message.from_user.firstname + ' ' + message.from_user.lastname
+        showed_name = message.from_user.first_name + ' ' + message.from_user.lastname
 
         if acc.UsernameExists(showed_name) == True:
             unk = 'Unknown' + message.from_user.id
             acc.CreateNewAccount(message.from_user.id, unk)
-            showed_name = message.from_user.firstname + ' ' + message.from_user.lastname  + message.from_user.id
+            showed_name = message.from_user.first_name + ' ' + message.from_user.last_name  + message.from_user.id
             acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'False')
             acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
         elif acc.UsernameExists(showed_name) == False:
             unk = 'Unknown' + message.from_user.id
             acc.CreateNewAccount(message.from_user.id, unk)
-            showed_name = message.from_user.firstname + ' ' + message.from_user.lastname
+            showed_name = message.from_user.first_name + ' ' + message.from_user.last_name
             acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'False')
             acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
 
@@ -52,12 +52,25 @@ def reg(message):
     elif userindatabase == False:
         acc.CreateNewAccount(message.from_user.id, message.from_user.username)
         acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'True')
-        unk = 'Unknown' + message.from_user.id
+        unk = 'Unknown' + str(message.from_user.id)
         acc.SetAccountDataElement(message.from_user.id, 'acc_username', unk)
 
     elif userindatabase == True:
         if acc.GetAccountDataByID(message.from_user.id)['acc_name'][:7] == 'Unknown' and message.from_user.username != None:
             acc.SetAccountDataElement(message.from_user.id, 'acc_name', message.from_user.username)
+        showed_name = message.from_user.first_name +' '+ message.from_user.last_name
+        showed_name2 = message.from_user.first_name +' '+ message.from_user.last_name + message.from_user.id
+        if (acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == False and acc.GetAccountDataByID(message.from_user.id)['acc_username'] != showed_name)\
+            or (acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == False and acc.GetAccountDataByID(message.from_user.id)['acc_username'] != showed_name2):
+
+            showed_name = message.from_user.first_name +' '+ message.from_user.last_name
+            if acc.UsernameExists(showed_name) == True:
+                showed_name = message.from_user.first_name +' '+ message.from_user.last_name + message.from_user.id
+                acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+            elif acc.UsernameExists(showed_name) == False:
+                showed_name = message.from_user.first_name +' '+ message.from_user.last_name
+                acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+
         main(message)
 
 def main(message):

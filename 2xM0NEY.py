@@ -203,21 +203,20 @@ f'''
     elif call.data == 'accaunt':
         show_realname = acc.GetAccountDataByID(call.message.chat.id)["acc_showRealName"]
         markup = types.InlineKeyboardMarkup()
-<<<<<<< HEAD
+
         if call.from_user.username != None:
             if show_realname == 'True':
                 name_showed = '@' + str(call.from_user.username)
                 btn = types.InlineKeyboardButton(text = f'Ввести новое имя пользователя✏️', callback_data = 'show_nicknamebtnoff')
         else:
             acc.SetAccountDataElement(call.from_user.username, 'acc_showRealName', 'False')
-            
+
         if show_realname == 'False':
-=======
+            pass
         if show_realname == 'True':
             name_showed = call.from_user.username
             btn = types.InlineKeyboardButton(text = f'Выключить показ telegram nickname', callback_data = 'show_nicknamebtnoff')
         elif show_realname == 'False':
->>>>>>> parent of 3c1813c... Update 2xM0NEY.py
             name_showed = acc.GetAccountDataByID(call.message.chat.id)["acc_username"]
             btn = types.InlineKeyboardButton(text = f'Включить показ telegram nickname', callback_data = 'show_nicknamebtnon')
 

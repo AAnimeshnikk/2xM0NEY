@@ -34,6 +34,9 @@ def reg(message):
         @bot.message_handler(func=lambda message: True, content_types=['text'])
         def input_username(message):
             if len(message.text) < 30:
+                acc.CreateNewAccount(message.from_user.id, 'Unknown' + str(chat_id))
+                acc.SetAccountDataElement(message.from_user.id, "acc_username", 'Unknown' + str(chat_id))
+                acc.SetAccountDataElement(message.from_user.id, "acc_showRealName", "False")
                 acc.SetAccountDataElement(message.from_user.id, 'acc_username', message.text)
                 main(message)
             else:
@@ -41,10 +44,8 @@ def reg(message):
                 get_uname()
 
     userindatabase = acc.AccountExistsByID(chat_id)
+    
     if userindatabase == False and acc_name == None:
-        acc.CreateNewAccount(message.from_user.id, 'Unknown' + str(chat_id))
-        acc.SetAccountDataElement(message.from_user.id, "acc_username", 'Unknown' + str(chat_id))
-        acc.SetAccountDataElement(message.from_user.id, "acc_showRealName", "False")
         bot.send_message(message.from_user.id, 'Введите желаемое имя пользователя (до 30 символов) : ')
         get_uname()
 

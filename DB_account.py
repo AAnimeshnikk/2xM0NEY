@@ -17,13 +17,16 @@ def UsernameExists(username):
 
 def GetAccountDataByID(acc_id):
     data.execute("SELECT * FROM Accounts WHERE acc_id = '%s'" % acc_id) # command for sql
-    _accountData = data.fetchall()[0]  # result
-    accountData = {}
-    accountData["acc_id"] = _accountData[0]
-    accountData["acc_name"] = _accountData[1]
-    accountData["acc_username"] = _accountData[2]
-    accountData["acc_showRealName"] = _accountData[3]
-    accountData["acc_balance"] = _accountData[4]
+    try:
+        _accountData = data.fetchall()[0]  # result
+        accountData = {}
+        accountData["acc_id"] = _accountData[0]
+        accountData["acc_name"] = _accountData[1]
+        accountData["acc_username"] = _accountData[2]
+        accountData["acc_showRealName"] = _accountData[3]
+        accountData["acc_balance"] = _accountData[4]
+    except:
+        raise ValueError("unknown id: '%s'" % acc_id)
     return accountData
 
 def CreateNewAccount(acc_id, acc_name): # create new account for user

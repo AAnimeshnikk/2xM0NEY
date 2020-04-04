@@ -1,6 +1,4 @@
-Кароче
-Нахой
-АМЕЛА ВІЗ Е КОКО
+lisiy niga v temnote v koke xD
 
 import DB_account as acc
 
@@ -15,6 +13,36 @@ acc.CreateNewAccount(acc_id, acc_name) - створює аккаунт кори�
 
 acc.SetAccountDataElement(acc_id, element, value) - для користувача з айді acc_id змінює значення element на value
 
-Замість 'acc_id', 'acc_name', 'acc_username', 'acc_showRealName', 'acc_balance' мона юзать acc.acc_id,
+Замість тебе, ніга, 'acc_id', 'acc_name', 'acc_username', 'acc_showRealName', 'acc_balance' мона юзать acc.acc_id,
          acc.acc_name, acc.acc_username, acc.acc_showRealName, acc.acc_balance
+
+
+
+
+
+DOCS FOR ROOMS NIGA
+def SetRoomOnline(room_id, value) - ставить онлайн value для кімнати з room_id
+
+def GetRoomsOnline(): повертає всі онлайни; {"1":99999, "2":9999, "3":9999, ..... , "20": 949949нігабля}
+
+def GetRoomOnline(room_id): повертає онлайн числом для кімнати з айді room_id
+
+
+def GetRoomsTypes(): повертає всі типи; {"1":"fixed", "2":"fixed", "3":"fixed", ... "10":"fixed", "11":"unfixed", .. , "20": "unfixed nigaaaaaaaaa"}
+
+def GetRoomType(room_id): повертає тип кімнати з айді room_id
+
+def AddUserToRoom(room_id, acc_id): додає юзера з айді acc_id до кімнати з айді room_id (додає іменно acc_id а не acc_name або acc_username...)
+
+def RemoveUserFromRoom(room_id, acc_id): видаляє юзера з айді acc_id з кімнати room_id (видаляє іменно acc_id а не acc_name або acc_username... pisya)
+
+def RemoveAllUsersFromRoom(room_id): видаляє всіх юзерів з кімнати з room_id
+
+def SetUserMoneyRate(room_id, acc_id, value): встановлює ставку розміров в value для користувача acc_id в кімнаті room_id
+
+def GetUserMoneyRate(room_id, acc_id): повертає грошову ставку гравця з acc_id в кімнаті room_id
+
+def GetAllUsersMoneyRate(room_id): повертає {"54133313":13321321, "93393733":0, "3131333":666, ...} де ключі - acc_id всіх гравців
+
+def GetRoomRateOfMoney(room_id): повертає число для "fixed" кімнати(фіксована ставка), "NONE" для "unfixed"
 

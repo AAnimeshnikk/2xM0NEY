@@ -50,6 +50,7 @@ def reg(message):
         bot.send_message(message.from_user.id, 'Введите желаемое имя пользователя (до 30 символов) : ')
         get_uname()
 
+
     elif userindatabase == False:
         acc_name = '@' + message.from_user.username
         acc.CreateNewAccount(message.from_user.id, acc_name)
@@ -274,9 +275,11 @@ f'''
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
         text = 'Выберите комнату :', reply_markup = markup)
 
-
+    # Показывать Telegram UserName
     elif call.data == 'show_nicknamebtnon':
         if acc.GetAccountDataByID(call.message.chat.id)['acc_name'] != None:
+            unk = 'Unknown' + str(message.from_user.id)
+            acc.SetAccountDataElement(call.message.chat.id, "acc_username", unk)
             acc.SetAccountDataElement(call.message.chat.id, "acc_showRealName", "True")
             markup = types.InlineKeyboardMarkup()
             btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt')
@@ -310,6 +313,7 @@ f'''
             bot.answer_callback_query(call.id, show_alert=True,
             text="У вас нету Telegram NickName. Добавте его в настройках телеграм профиля и перезапустите бота, написав /start")
 
+    # Показывать пользовательское имя пользователя
     elif call.data == 'show_nicknamebtnoff':
         bot.send_message(call.message.chat.id, 'Введите новое имя пользователя (до 30 символов) : ')
         @bot.message_handler(func=lambda message: True, content_types=['text'])

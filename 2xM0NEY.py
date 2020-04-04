@@ -44,7 +44,7 @@ def reg(message):
                 get_uname()
 
     userindatabase = acc.AccountExistsByID(chat_id)
-    
+
     if userindatabase == False and acc_name == None:
         bot.send_message(message.from_user.id, 'Введите желаемое имя пользователя (до 30 символов) : ')
         get_uname()
@@ -193,8 +193,10 @@ f'''
     elif call.data == 'accaunt':
         show_nickname = '✅'
         markup = types.InlineKeyboardMarkup()
-        btn = types.InlineKeyboardButton(text = f'Показывать ник {show_nickname}', callback_data = 'show_nicknamebtn')
-
+        if show_nickname == '✅':
+            btn = types.InlineKeyboardButton(text = f'Выключить показ telegram nickname', callback_data = 'show_nicknamebtnoff')
+        elif:
+            btn = types.InlineKeyboardButton(text = f'Включить показ telegram nickname', callback_data = 'show_nicknamebtnon')
         back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
 
     # Меню фиксированных комнат

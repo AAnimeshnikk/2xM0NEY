@@ -191,13 +191,18 @@ f'''
 
     # Аккаунт
     elif call.data == 'accaunt':
-        show_nickname = '✅'
+        show_realname = acc.GetAccountDataByID(call.message.chat.id)["acc_showRealName"]
         markup = types.InlineKeyboardMarkup()
-        if show_nickname == '✅':
+        if show_realname == 'True':
+            name_showed = call.from_user.username
             btn = types.InlineKeyboardButton(text = f'Выключить показ telegram nickname', callback_data = 'show_nicknamebtnoff')
-        elif:
+        elif show_realname == 'False':
+            name_showed = acc.GetAccountDataByID(call.message.chat.id)["acc_username"]
             btn = types.InlineKeyboardButton(text = f'Включить показ telegram nickname', callback_data = 'show_nicknamebtnon')
+
         back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
+        bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+        text = f'Ваше имя : {name_showed}'
 
     # Меню фиксированных комнат
     elif call.data == 'roomsfix':

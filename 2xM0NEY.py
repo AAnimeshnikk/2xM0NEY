@@ -34,8 +34,9 @@ def reg(message):
         @bot.message_handler(func=lambda message: True, content_types=['text'])
         def input_username(message):
             if len(message.text) < 30:
-                acc.CreateNewAccount(message.from_user.id, 'Unknown' + str(chat_id))
-                acc.SetAccountDataElement(message.from_user.id, "acc_username", 'Unknown' + str(chat_id))
+                unk = 'Unknown' + str(message.from_user.id)
+                acc.CreateNewAccount(message.from_user.id, unk)
+                acc.SetAccountDataElement(message.from_user.id, "acc_username", unk)
                 acc.SetAccountDataElement(message.from_user.id, "acc_showRealName", "False")
                 acc.SetAccountDataElement(message.from_user.id, 'acc_username', message.text)
                 main(message)
@@ -43,14 +44,15 @@ def reg(message):
                 bot.send_message(message.from_user.id, 'Слишком много символов, максимальное количество символов = 30 : ')
                 get_uname()
 
-    userindatabase = acc.AccountExistsByID(chat_id)
+    userindatabase = acc.AccountExistsByID(message.from_user.id)
 
     if userindatabase == False and acc_name == None:
         bot.send_message(message.from_user.id, 'Введите желаемое имя пользователя (до 30 символов) : ')
         get_uname()
 
     elif userindatabase == False:
-        acc.SetAccountDataElement(message.from_user.id, "acc_username", 'Unknown' + str(chat_id))
+        unk = 'Unknown' + str(message.from_user.id)
+        acc.SetAccountDataElement(message.from_user.id, "acc_username", unk)
         acc_name = '@' + message.from_user.username
         acc.CreateNewAccount(message.from_user.id, acc_name)
         main(message)

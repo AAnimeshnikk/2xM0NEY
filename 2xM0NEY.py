@@ -25,28 +25,43 @@ bot = telebot.TeleBot('1072358209:AAHiQ__0NsNCsQEbld73xv25zjr-zGWATds')
 def reg(message):
     userindatabase = acc.AccountExistsByID(message.from_user.id)
 
+    first_name = message.from_user.first_name
+    last_name = message.from_user.last_name
+    if first_name is None:
+        first_name = "Unknown" # input something WHERE
+    if last_name is None:
+        last_name = "dude" # input something WHERE
+
     if userindatabase == False and message.from_user.username == None:
         bot.send_message(message.from_user.id,
 '''
 У вас нету Telegram UserName, поетому бот будет использовать ваши имя и фамилию.
-Если среди учасников уже есть человек с такими именем и фамилией бот добавит ваш в конец вашей фамилии ваш telegram id
+Если среди учасников уже есть человек с такими именем и фамилией бот добавит в конец вашей фамилии ваш telegram id
 ''')
-        showed_name = message.from_user.first_name + ' ' + message.from_user.lastname
+        showed_name = first_name + ' ' + last_name
 
         if acc.UsernameExists(showed_name) == True:
-            unk = 'Unknown' + message.from_user.id
+            unk = 'Unknown' + str(message.from_user.id)
             acc.CreateNewAccount(message.from_user.id, unk)
-            showed_name = message.from_user.first_name + ' ' + message.from_user.last_name  + message.from_user.id
-            acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'False')
-            acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
-        elif acc.UsernameExists(showed_name) == False:
-            unk = 'Unknown' + message.from_user.id
-            acc.CreateNewAccount(message.from_user.id, unk)
-            showed_name = message.from_user.first_name + ' ' + message.from_user.last_name
+            showed_name = first_name + ' ' + last_name  + str(message.from_user.id)
             acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'False')
             acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
 
-        bot.send_message(message.from_user.id, f'Вы успешно зарезестрированы! \nВаш ник : {acc.GetAccountDataByID(message.from_user.id)}')
+        elif acc.UsernameExists(showed_name) == False:
+            
+            unk = 'Unknown' + str(message.from_user.id)
+            acc.CreateNewAccount(message.from_user.id, unk)
+            showed_name = first_name + ' ' + last_name
+            acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'False')
+            acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+
+        if acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == 'False':
+            name = acc.GetAccountDataByID(message.from_user.id)["acc_username"]
+
+        elif acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == 'True':
+            name = acc.GetAccountDataByID(message.from_user.id)["acc_name"]
+
+        bot.send_message(message.from_user.id, f'Вы успешно зарегестрированы! \nВаш ник : {name}')
         main(message)
 
     elif userindatabase == False:
@@ -55,20 +70,33 @@ def reg(message):
         unk = 'Unknown' + str(message.from_user.id)
         acc.SetAccountDataElement(message.from_user.id, 'acc_username', unk)
 
+        if acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == 'False':
+            name = acc.GetAccountDataByID(message.from_user.id)["acc_username"]
+
+        elif acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == 'True':
+            name = acc.GetAccountDataByID(message.from_user.id)["acc_name"]
+
+        bot.send_message(message.from_user.id, f'Вы успешно зарегестрированы! \nВаш ник : {name}')
+
+        main(message)
+
     elif userindatabase == True:
+
         if acc.GetAccountDataByID(message.from_user.id)['acc_name'][:7] == 'Unknown' and message.from_user.username != None:
             acc.SetAccountDataElement(message.from_user.id, 'acc_name', message.from_user.username)
-        showed_name = message.from_user.first_name +' '+ message.from_user.last_name
-        showed_name2 = message.from_user.first_name +' '+ message.from_user.last_name + message.from_user.id
+
+        showed_name = first_name +' '+ last_name
+        showed_name2 = first_name +' '+ last_name + str(message.from_user.id)
+
         if (acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == False and acc.GetAccountDataByID(message.from_user.id)['acc_username'] != showed_name)\
             or (acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == False and acc.GetAccountDataByID(message.from_user.id)['acc_username'] != showed_name2):
 
-            showed_name = message.from_user.first_name +' '+ message.from_user.last_name
+            showed_name = first_name + ' ' + last_name
             if acc.UsernameExists(showed_name) == True:
-                showed_name = message.from_user.first_name +' '+ message.from_user.last_name + message.from_user.id
+                showed_name = first_name + ' ' + last_name + str(message.from_user.id)
                 acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
             elif acc.UsernameExists(showed_name) == False:
-                showed_name = message.from_user.first_name +' '+ message.from_user.last_name
+                showed_name = first_name + ' ' + last_name
                 acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
 
         main(message)
@@ -208,29 +236,7 @@ f'''
 
     # Аккаунт
     elif call.data == 'accaunt':
-        show_realname = acc.GetAccountDataByID(call.message.chat.id)["acc_showRealName"]
-        markup = types.InlineKeyboardMarkup()
-
-        if call.from_user.username != None:
-            if show_realname == 'True':
-                name_showed = '@' + str(call.from_user.username)
-                btn = types.InlineKeyboardButton(text = f'Ввести новое имя пользователя✏️', callback_data = 'show_nicknamebtnoff')
-        else:
-            acc.SetAccountDataElement(call.from_user.username, 'acc_showRealName', 'False')
-
-        if show_realname == 'False':
-            pass
-        if show_realname == 'True':
-            name_showed = call.from_user.username
-            btn = types.InlineKeyboardButton(text = f'Выключить показ telegram nickname', callback_data = 'show_nicknamebtnoff')
-        elif show_realname == 'False':
-            name_showed = acc.GetAccountDataByID(call.message.chat.id)["acc_username"]
-            btn = types.InlineKeyboardButton(text = f'Включить показ telegram nickname', callback_data = 'show_nicknamebtnon')
-
-        back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
-        bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-        text = f'Ваше имя : {name_showed}')
-
+        pass
     # Меню фиксированных комнат
     elif call.data == 'roomsfix':
         markup = types.InlineKeyboardMarkup()

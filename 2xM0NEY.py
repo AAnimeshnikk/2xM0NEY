@@ -58,16 +58,15 @@ def reg(message):
         main(message)
 
     elif userindatabase == True:
-        i = acc.GetAccountDataByID(message.from_user.id,'acc_name')
+        i = acc.GetAccountDataByID(message.from_user.id)['acc_name']
         if i[:7] == 'Unknown':
             if message.from_user.username != None:
                 acc.SetAccountDataElement(message.from_user.id, 'acc_name', message.from_user.username)
-                
+
         chat_id = message.from_user.id
         main(message)
 
 def main(message):
-    global chat_id
     # Добавляем клавиатуру и кнопки
     markup = types.InlineKeyboardMarkup()
     btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt')
@@ -80,7 +79,7 @@ def main(message):
     markup.row(btn3)
 
     # Отправляем сообщение с кнопками
-    bot.send_message(chat_id,
+    bot.send_message(message.from_user.id,
     f'''
     ⭕️Главное меню :
 
@@ -129,6 +128,9 @@ def callback_inline(call):
         reply_markup = markup)
 
     # Переход в главное меню
+
+
+    # Переход в главное меню
     elif call.data == 'menu':
         # Повторяем всё из функции main()
         markup = types.InlineKeyboardMarkup()
@@ -144,7 +146,7 @@ def callback_inline(call):
         # Редактируем сообщение с кнопками
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text =
 f'''
-⭕️Главное меню:⭕️
+⭕️Главное меню:
 
 👮‍♂️Администратор : {admin}
 💬Чат : {chat}

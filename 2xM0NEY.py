@@ -202,7 +202,7 @@ f'''
 
         back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-        text = f'Ваше имя : {name_showed}'
+        text = f'Ваше имя : {name_showed}')
 
     # Меню фиксированных комнат
     elif call.data == 'roomsfix':

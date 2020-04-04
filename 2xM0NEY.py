@@ -278,7 +278,7 @@ f'''
     # Показывать Telegram UserName
     elif call.data == 'show_nicknamebtnon':
         if acc.GetAccountDataByID(call.message.chat.id)['acc_name'] != None:
-            unk = 'Unknown' + str(message.from_user.id)
+            unk = 'Unknown' + str(call.message.chat.id)
             acc.SetAccountDataElement(call.message.chat.id, "acc_username", unk)
             acc.SetAccountDataElement(call.message.chat.id, "acc_showRealName", "True")
             markup = types.InlineKeyboardMarkup()

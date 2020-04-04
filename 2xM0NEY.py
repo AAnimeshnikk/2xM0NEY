@@ -274,5 +274,55 @@ f'''
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
         text = 'Выберите комнату :', reply_markup = markup)
 
+
+    elif call.data == 'show_nicknamebtnon':
+        if acc.GetAccountDataByID(call.message.chat.id)['acc_name'] != None:
+            acc.SetAccountDataElement(call.message.chat.id, "acc_showRealName", "True")
+            markup = types.InlineKeyboardMarkup()
+            btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt')
+            btn2 = types.InlineKeyboardButton(text = 'Деньги💵', callback_data = 'money')
+            btn3 = types.InlineKeyboardButton(text = 'Помощь🚑', callback_data = 'help')
+            btn4 = types.InlineKeyboardButton(text = 'Комнаты🏙\n(Фиксированые)', callback_data = 'roomsfix')
+            btn5 = types.InlineKeyboardButton(text = 'Комнаты🌆\n(Динамические)', callback_data = 'roomsunfix')
+            markup.row(btn1, btn2)
+            markup.row(btn4, btn5)
+            markup.row(btn3)
+
+            bot.answer_callback_query(call.id, show_alert=True,
+            text="Имя пользователя успешно изменено")
+
+            # Отправляем сообщение с кнопками
+            bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+            text = f'''
+⭕️Главное меню :
+
+👮‍♂️Администратор : {admin}
+💬Чат : {chat}
+👁Новости : {news}
+
+Нажмите \"Помощь🚑\" для отображения инструкции.
+Приятой игры!
+            ''',
+                disable_web_page_preview = True,
+                reply_markup = markup
+                )
+        else:
+            bot.answer_callback_query(call.id, show_alert=True,
+            text="У вас нету Telegram NickName. Добавте его в настройках телеграм профиля и перезапустите бота, написав /start")
+
+    elif call.data == 'show_nicknamebtnoff':
+        bot.send_message(call.message.chat.id, 'Введите новое имя пользователя (до 30 символов) : ')
+        @bot.message_handler(func=lambda message: True, content_types=['text'])
+        def edit_username(message):
+            if len(message.text) < 30:
+                acc.SetAccountDataElement(call.message.chat.id, "acc_showRealName", "False")
+                acc.SetAccountDataElement(call.message.chat.id, 'acc_username', message.text)
+                bot.answer_callback_query(call.id, show_alert=True,
+                text="Имя пользователя успешно изменено")
+                main(message)
+            else:
+                bot.send_message(call.message.chat.id, 'Слишком много символов, максимальное количество символов = 30 : ')
+                edit_username()
+
 # Включаем цикл для бота
 bot.polling(none_stop = True)

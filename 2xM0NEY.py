@@ -34,7 +34,10 @@ def reg(message):
         showed_name = message.from_user.firstname + ' ' + message.from_user.lastname
 
         if acc.UsernameExists(showed_name) == True:
-            showed_name += message.from_user.id
+            unk = 'Unknown' + message.from_user.id
+            acc.CreateNewAccount(message.from_user.id, unk)
+            showed_name = message.from_user.firstname + ' ' + message.from_user.lastname  + message.from_user.id
+            acc.SetAccountDataElement(message.from_user.id, 'acc_username', value)
 
     elif userindatabase == False:
         unk = 'Unknown' + str(message.from_user.id)

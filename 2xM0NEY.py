@@ -58,6 +58,11 @@ def reg(message):
         main(message)
 
     elif userindatabase == True:
+        i = acc.GetAccountDataByID(message.from_user.id,'acc_name')
+        if i[:7] == 'Unknown':
+            if message.from_user.username != None:
+                acc.SetAccountDataElement(message.from_user.id, 'acc_name', message.from_user.username)
+                
         chat_id = message.from_user.id
         main(message)
 
@@ -244,7 +249,7 @@ f'''
     # Динамические комнаты
     elif call.data == 'roomsunfix':
         markup = types.InlineKeyboardMarkup()
-        btn = btn = types.InlineKeyboardButton(text = '[0:10] 15 руб №1', callback_data = 'roomunfix1')
+        btn = btn = types.InlineKeyboardButton(text = '[0/10] 15 руб №1', callback_data = 'roomunfix1')
         btn1 = types.InlineKeyboardButton(text = '[0/10] 15 руб №2', callback_data = 'roomunfix2')
         btn2 = types.InlineKeyboardButton(text = '[0/10] 30 руб №3', callback_data = 'roomunfix3')
         btn3 = types.InlineKeyboardButton(text = '[0/10] 50 руб №4', callback_data = 'roomunfix4')

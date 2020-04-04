@@ -52,12 +52,11 @@ def reg(message):
 
 
     elif userindatabase == False:
-        acc_name = '@' + message.from_user.username
-        acc.CreateNewAccount(message.from_user.id, acc_name)
         unk = 'Unknown' + str(message.from_user.id)
         acc.SetAccountDataElement(message.from_user.id, "acc_username", unk)
+        acc_name = '@' + message.from_user.username
+        acc.CreateNewAccount(message.from_user.id, acc_name)
         main(message)
-
     elif userindatabase == True:
         i = acc.GetAccountDataByID(message.from_user.id)['acc_name']
         if i[:7] == 'Unknown':
@@ -204,6 +203,7 @@ f'''
     elif call.data == 'accaunt':
         show_realname = acc.GetAccountDataByID(call.message.chat.id)["acc_showRealName"]
         markup = types.InlineKeyboardMarkup()
+<<<<<<< HEAD
         if call.from_user.username != None:
             if show_realname == 'True':
                 name_showed = '@' + str(call.from_user.username)
@@ -212,20 +212,18 @@ f'''
             acc.SetAccountDataElement(call.from_user.username, 'acc_showRealName', 'False')
             
         if show_realname == 'False':
+=======
+        if show_realname == 'True':
+            name_showed = call.from_user.username
+            btn = types.InlineKeyboardButton(text = f'Выключить показ telegram nickname', callback_data = 'show_nicknamebtnoff')
+        elif show_realname == 'False':
+>>>>>>> parent of 3c1813c... Update 2xM0NEY.py
             name_showed = acc.GetAccountDataByID(call.message.chat.id)["acc_username"]
-            btn = types.InlineKeyboardButton(text = f'Использовать Telegram Nickname✏️', callback_data = 'show_nicknamebtnon')
+            btn = types.InlineKeyboardButton(text = f'Включить показ telegram nickname', callback_data = 'show_nicknamebtnon')
 
         back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
-        markup.row(btn)
-        markup.row(back)
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-        text =
-        f'''
-👤Ваше имя : {name_showed}
-
-💰Баланс : {acc.GetAccountDataByID(call.message.chat.id)["acc_balance"]} руб.
-        ''',
-         reply_markup = markup)
+        text = f'Ваше имя : {name_showed}')
 
     # Меню фиксированных комнат
     elif call.data == 'roomsfix':

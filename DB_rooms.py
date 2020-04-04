@@ -1,4 +1,5 @@
 from DB_connector import *
+import time
 
 def GetRoomsOnline():
     data.execute("SELECT room_online FROM Rooms")
@@ -23,5 +24,16 @@ def RemoveUserFromRoom(room_id, acc_id):
     stop_index = start_index+subsrt.index(";")+1
     strdata = strdata.replace(strdata[start_index:stop_index], "")
     data.execute("UPDATE Rooms SET room_usersData = '%s' WHERE room_id = '%s'" % (strdata, room_id))
+    database.commit()
+
+def SetUserMoneyRate(room_id, acc_id, value):
+    data.execute("SELECT room_usersData FROM Rooms WHERE room_id = '%s'" % room_id)
+    strdata = data.fetchall()[0][0]
+    start_index = strdata.index("user*%s" % acc_id)
+    subsrt = strdata[start_index:]
+    stop_index = start_index + subsrt.index(";") + 1
+    strdata = strdata.replace(strdata[start_index:stop_index], "user*%s:%s;" % (acc_id, value))
+    data.execute("UPDATE Rooms SET room_usersData = '%s' WHERE room_id = '%s'" % (strdata, room_id))
+
     database.commit()
 

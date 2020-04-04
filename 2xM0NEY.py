@@ -204,10 +204,14 @@ f'''
     elif call.data == 'accaunt':
         show_realname = acc.GetAccountDataByID(call.message.chat.id)["acc_showRealName"]
         markup = types.InlineKeyboardMarkup()
-        if show_realname == 'True':
-            name_showed = '@' + call.from_user.username
-            btn = types.InlineKeyboardButton(text = f'Ввести новое имя пользователя✏️', callback_data = 'show_nicknamebtnoff')
-        elif show_realname == 'False':
+        if call.from_user.username != None:
+            if show_realname == 'True':
+                name_showed = '@' + str(call.from_user.username)
+                btn = types.InlineKeyboardButton(text = f'Ввести новое имя пользователя✏️', callback_data = 'show_nicknamebtnoff')
+        else:
+            acc.SetAccountDataElement(call.from_user.username, 'acc_showRealName', 'False')
+            
+        if show_realname == 'False':
             name_showed = acc.GetAccountDataByID(call.message.chat.id)["acc_username"]
             btn = types.InlineKeyboardButton(text = f'Использовать Telegram Nickname✏️', callback_data = 'show_nicknamebtnon')
 

@@ -37,23 +37,27 @@ def reg(message):
             unk = 'Unknown' + message.from_user.id
             acc.CreateNewAccount(message.from_user.id, unk)
             showed_name = message.from_user.firstname + ' ' + message.from_user.lastname  + message.from_user.id
-            acc.SetAccountDataElement(message.from_user.id, 'acc_username', value)
+            acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'False')
+            acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+        elif acc.UsernameExists(showed_name) == False:
+            unk = 'Unknown' + message.from_user.id
+            acc.CreateNewAccount(message.from_user.id, unk)
+            showed_name = message.from_user.firstname + ' ' + message.from_user.lastname
+            acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'False')
+            acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
 
-    elif userindatabase == False:
-        unk = 'Unknown' + str(message.from_user.id)
-        acc_name = '@' + message.from_user.username
-        acc.CreateNewAccount(message.from_user.id, acc_name)
-        acc.SetAccountDataElement(message.from_user.id, "acc_username", unk)
+        bot.send_message(message.from_user.id, f'Вы успешно зарезестрированы! \nВаш ник : {acc.GetAccountDataByID(message.from_user.id)}')
         main(message)
 
+    elif userindatabase == False:
+        acc.CreateNewAccount(message.from_user.id, message.from_user.username)
+        acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'True')
+        unk = 'Unknown' + message.from_user.id
+        acc.SetAccountDataElement(message.from_user.id, 'acc_username', unk)
 
     elif userindatabase == True:
-        i = acc.GetAccountDataByID(message.from_user.id)['acc_name']
-        if i[:7] == 'Unknown':
-            if message.from_user.username != None:
-                acc.SetAccountDataElement(message.from_user.id, 'acc_name', message.from_user.username)
-
-        chat_id = message.from_user.id
+        if acc.GetAccountDataByID(message.from_user.id)['acc_name'][:7] == 'Unknown' and message.from_user.username != None:
+            acc.SetAccountDataElement(message.from_user.id, 'acc_name', message.from_user.username)
         main(message)
 
 def main(message):

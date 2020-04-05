@@ -212,9 +212,10 @@ f'''
         markup = types.InlineKeyboardMarkup()
         btn = types.InlineKeyboardButton(text = 'Ввод🏦', callback_data = 'deposit')
         btn1 = types.InlineKeyboardButton(text = 'Вывод💸', callback_data = 'withdrawal')
-        btn2 = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
+        back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
         markup.row(btn)
         markup.row(btn1)
+        markup.row(back)
         bot.edit_message_text(chat_id = call.message.chat.id,
         message_id = call.message.message_id,
         text ='Выберите что хотите сделать : ',

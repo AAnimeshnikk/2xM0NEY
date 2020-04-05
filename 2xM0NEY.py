@@ -12,7 +12,7 @@ admin = '@AAnimeshnikk'
 z_admin = '@pypcdev'
 chat = 'https://t.me/twoxchat'
 news = 'https://t.me/twoxnews'
-id = '560083718' # Твой ид, что-бы бот кидал тебе вce, что происходит в боте
+id = '560083718' # Твой ид, что-бы бот кидал тебе вce, что происходит в боте 123
 
 # Для киви апи
 # token = ''         # https://qiwi.com/api
@@ -258,8 +258,13 @@ f'''
             last_name = ""
 
         need_to_modify = True
+<<<<<<< HEAD
         if call.data == "accaunt_name": # show name
             if "Unknown" in acc.GetAccountDataByID(call.message.chat.id)['acc_name']:
+=======
+        if call.data == "accaunt_name":
+            if acc.GetAccountDataByID(call.message.chat.id)[acc.acc_name] == f"Unknown{call.message.chat.id}":
+>>>>>>> 3935f4f7278c9c96b53dbe01c71dde03fc712c1d
                 bot.answer_callback_query(callback_query_id=call.id, show_alert=True, text='У вас нету Telegram Nickname!')
                 need_to_modify = False
             else:
@@ -270,6 +275,7 @@ f'''
                 if acc.GetAccountDataByID(call.message.chat.id)[acc.acc_showRealName] == "False":
                     bot.answer_callback_query(callback_query_id=call.id, show_alert=True, text='Имя успешно изменено!')
                     acc.SetAccountDataElement(call.message.chat.id, acc.acc_showRealName, "True")
+<<<<<<< HEAD
         else: # Выводим UserName
             if acc.GetAccountDataByID(call.message.chat.id)['acc_showRealName'] == "True":
                 if first_name != '':
@@ -279,6 +285,12 @@ f'''
                 acc.SetAccountDataElement(call.message.chat.id, 'acc_username', sn)
                 acc.SetAccountDataElement(call.message.chat.id, acc.acc_showRealName, "False")
                 bot.answer_callback_query(callback_query_id=call.id,show_alert=True, text='Имя успешно изменено!')
+=======
+        else:
+            if acc.GetAccountDataByID(call.message.chat.id)[acc.acc_showRealName] == "True":
+                bot.answer_callback_query(callback_query_id=call.id, show_alert=True, text='Имя успешно изменено!')
+            acc.SetAccountDataElement(call.message.chat.id, acc.acc_showRealName, "False")
+>>>>>>> 3935f4f7278c9c96b53dbe01c71dde03fc712c1d
 
         if need_to_modify:
             markup = types.InlineKeyboardMarkup()
@@ -296,7 +308,11 @@ f'''
                                   text=f'''
 👤 Ваше имя : {accaunt_name}
 
+<<<<<<< HEAD
 💰 Баланс : {acc.GetAccountDataByID(call.message.chat.id)['acc_balance']} руб.
+=======
+💰 Баланс : {acc.GetAccountDataByID(call.message.chat.id)['acc_balance']}
+>>>>>>> 3935f4f7278c9c96b53dbe01c71dde03fc712c1d
                     ''', reply_markup=markup)
 
 

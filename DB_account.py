@@ -26,7 +26,7 @@ def GetAccountDataByID(acc_id):
     accountData["acc_balance"] = _accountData[4]
     return accountData
 
-def CreateNewAccount(acc_id, acc_name): # create new account for user
+def CreateNewAccount(acc_id, acc_name): # create new account for useeeee
     data.execute("INSERT INTO Accounts(acc_id, acc_name, acc_username, acc_showRealName, acc_balance) VALUES('%s', '%s', 'Unknown', 'True', '0')"
                  % (acc_id, acc_name))
     database.commit()

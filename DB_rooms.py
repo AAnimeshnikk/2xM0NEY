@@ -83,3 +83,5 @@ def GetAllUsersMoneyRate(room_id):
 def GetRoomRateOfMoney(room_id):
     data.execute("SELECT room_rateOfMoney FROM Rooms WHERE room_id = '%s'" % room_id)
     return data.fetchall()[0][0]
+
+# скоро обнова 

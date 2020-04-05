@@ -254,7 +254,7 @@ f'''
         markup.row(btn6,btn7)
         markup.row(btn8,btn9)
         markup.row(back)
-# посмотри в def reg я поправил чучуть ок
+
         bot.edit_message_text(chat_id = call.message.chat.id,
         message_id = call.message.message_id,
         text ='Выберите сумму для пополнения баланса : ',

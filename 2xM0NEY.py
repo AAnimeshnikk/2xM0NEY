@@ -12,7 +12,7 @@ admin = '@AAnimeshnikk'
 z_admin = '@pypcdev'
 chat = 'https://t.me/twoxchat'
 news = 'https://t.me/twoxnews'
-id = '560083718' # Твой ид, что-бы бот кидал тебе вce, что происходит в боте # i am trying to commit
+id = '560083718' # Твой ид, что-бы бот кидал тебе вce, что происходит в боте
 
 # Для киви апи
 # token = ''         # https://qiwi.com/api
@@ -31,7 +31,7 @@ def reg(message):
     if first_name is None:
         first_name = "Unknown"
     if last_name is None:
-        last_name = "dude" 
+        last_name = "dude"
 
     if userindatabase == False and message.from_user.username == None:
         bot.send_message(message.from_user.id,
@@ -108,7 +108,9 @@ def reg(message):
 def main(message):
     # Добавляем клавиатуру и кнопки
     markup = types.InlineKeyboardMarkup()
-    btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt')
+    btn1 = types.InlineKeyboardButton(text='Аккаунт🐶', callback_data='accaunt_username')
+    if acc.GetAccountDataByID(message.from_user.id)[acc.acc_showRealName] == "True":
+        btn1 = types.InlineKeyboardButton(text='Аккаунт🐶', callback_data='accaunt_name')
     btn2 = types.InlineKeyboardButton(text = 'Деньги💵', callback_data = 'money')
     btn3 = types.InlineKeyboardButton(text = 'Помощь🚑', callback_data = 'help')
     btn4 = types.InlineKeyboardButton(text = 'Комнаты🏙\n(Фиксированые)', callback_data = 'roomsfix')
@@ -181,7 +183,9 @@ def callback_inline(call):
 
         # Повторяем всё из функции main()
         markup = types.InlineKeyboardMarkup()
-        btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt')
+        btn1 = types.InlineKeyboardButton(text='Аккаунт🐶', callback_data='accaunt_username')
+        if acc.GetAccountDataByID(call.message.chat.id)[acc.acc_showRealName] == "True":
+            btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt_name')
         btn2 = types.InlineKeyboardButton(text = 'Деньги💵', callback_data = 'money')
         btn3 = types.InlineKeyboardButton(text = 'Помощь🚑', callback_data = 'help')
         btn4 = types.InlineKeyboardButton(text = 'Комнаты🏙\n(Фиксированые)', callback_data = 'roomsfix')
@@ -248,20 +252,40 @@ f'''
         reply_markup = markup)
 
     # Аккаунт
-    elif call.data == 'accaunt':
-        markup = types.InlineKeyboardMarkup()
-        back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
-        markup.row(back)
-        if acc.GetAccountDataByID(call.message.chat.id)['acc_showRealName'] == 'True':
-            accaunt_name = '@' + acc.GetAccountDataByID(call.message.chat.id)['acc_name']
-        elif acc.GetAccountDataByID(call.message.chat.id)['acc_showRealName'] == 'False':
-            accaunt_name = acc.GetAccountDataByID(call.message.chat.id)['acc_username']
-        bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-        text = f'''
-👤 Ваше имя : {accaunt_name}
+    elif 'accaunt' in call.data:
+        need_to_modify = True
+        if call.data == "accaunt_name":
+            if acc.GetAccountDataByID(call.message.chat.id)[acc.acc_name] == f"Unknown{call.message.chat.id}":
+                bot.answer_callback_query(callback_query_id=call.id, text='У вас нету Telegram Nickname!')
+                need_to_modify = False
+            else:
+                if acc.GetAccountDataByID(call.message.chat.id)[acc.acc_showRealName] == "False":
+                    bot.answer_callback_query(callback_query_id=call.id, text='Имя успешно изменено!')
+                    acc.SetAccountDataElement(call.message.chat.id, acc.acc_showRealName, "True")
+        else:
+            if acc.GetAccountDataByID(call.message.chat.id)[acc.acc_showRealName] == "True":
+                bot.answer_callback_query(callback_query_id=call.id, text='Имя успешно изменено!')
+            acc.SetAccountDataElement(call.message.chat.id, acc.acc_showRealName, "False")
 
-💰 Баланс : {acc.GetAccountDataByID(call.message.chat.id)['acc_balance']}
-        ''', reply_markup = markup)
+        if need_to_modify:
+            markup = types.InlineKeyboardMarkup()
+            back = types.InlineKeyboardButton(text='Назад🔙', callback_data='menu')
+            if acc.GetAccountDataByID(call.message.chat.id)['acc_showRealName'] == 'True':
+                accaunt_name = '@' + acc.GetAccountDataByID(call.message.chat.id)['acc_name']
+                show_name = types.InlineKeyboardButton(text="Использовать Username", callback_data="accaunt_username")
+            elif acc.GetAccountDataByID(call.message.chat.id)['acc_showRealName'] == 'False':
+                accaunt_name = acc.GetAccountDataByID(call.message.chat.id)['acc_username']
+                show_name = types.InlineKeyboardButton(text="Использовать Telegram Nickname",
+                                                       callback_data="accaunt_name")
+            markup.row(back)
+            markup.row(show_name)
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                  text=f'''
+            👤 Ваше имя : {accaunt_name}
+
+            💰 Баланс : {acc.GetAccountDataByID(call.message.chat.id)['acc_balance']}
+                    ''', reply_markup=markup)
+
 
     # Меню фиксированных комнат
     elif call.data == 'roomsfix':

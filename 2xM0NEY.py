@@ -278,7 +278,7 @@ f'''
         markup.row(back)
         bot.edit_message_text(chat_id = call.message.chat.id,
         message_id = call.message.message_id,
-        text = "Успешно! Используеться Telegram Nickname: %s" % acc.GetAccountDataByID(call.message.chat.id)["acc_name"],
+        text = "✅ Успешно! Используеться Telegram Nickname: %s" % acc.GetAccountDataByID(call.message.chat.id)["acc_name"],
         reply_markup = markup)
 
     elif call.data == "account_show_username":
@@ -288,7 +288,7 @@ f'''
         markup.row(back)
         bot.edit_message_text(chat_id = call.message.chat.id,
         message_id = call.message.message_id,
-        text = "Успешно! Используеться 2xM0NEY Username: %s" % acc.GetAccountDataByID(call.message.chat.id)["acc_username"],
+        text = "✅ Успешно! Используеться 2xM0NEY Username: %s" % acc.GetAccountDataByID(call.message.chat.id)["acc_username"],
         reply_markup = markup)
 
     elif call.data == 'roomsfix':

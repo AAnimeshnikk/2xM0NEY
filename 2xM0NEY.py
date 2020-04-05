@@ -12,7 +12,7 @@ admin = '@AAnimeshnikk'
 z_admin = '@pypcdev'
 chat = 'https://t.me/twoxchat'
 news = 'https://t.me/twoxnews'
-id = '560083718' # Твой ид, что-бы бот кидал тебе всеe, что происходит в боте
+id = '560083718' # Твой ид, что-бы бот кидал тебе вce, что происходит в боте
 
 # Для киви апи
 # token = ''         # https://qiwi.com/api

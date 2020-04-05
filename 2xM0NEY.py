@@ -175,10 +175,6 @@ def callback_inline(call):
         reply_markup = markup)
 
     # Переход в главное меню
-
-    # Переход в главное меню
-
-    # Переход в главное меню
     elif call.data == 'menu':
 
         # Повторяем всё из функции main()
@@ -256,15 +252,15 @@ f'''
         need_to_modify = True
         if call.data == "accaunt_name":
             if acc.GetAccountDataByID(call.message.chat.id)[acc.acc_name] == f"Unknown{call.message.chat.id}":
-                bot.answer_callback_query(callback_query_id=call.id, text='У вас нету Telegram Nickname!')
+                bot.answer_callback_query(callback_query_id=call.id, show_alert=True, text='У вас нету Telegram Nickname!')
                 need_to_modify = False
             else:
                 if acc.GetAccountDataByID(call.message.chat.id)[acc.acc_showRealName] == "False":
-                    bot.answer_callback_query(callback_query_id=call.id, text='Имя успешно изменено!')
+                    bot.answer_callback_query(callback_query_id=call.id, show_alert=True, text='Имя успешно изменено!')
                     acc.SetAccountDataElement(call.message.chat.id, acc.acc_showRealName, "True")
         else:
             if acc.GetAccountDataByID(call.message.chat.id)[acc.acc_showRealName] == "True":
-                bot.answer_callback_query(callback_query_id=call.id, text='Имя успешно изменено!')
+                bot.answer_callback_query(callback_query_id=call.id, show_alert=True, text='Имя успешно изменено!')
             acc.SetAccountDataElement(call.message.chat.id, acc.acc_showRealName, "False")
 
         if need_to_modify:
@@ -281,9 +277,9 @@ f'''
             markup.row(show_name)
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                   text=f'''
-            👤 Ваше имя : {accaunt_name}
+👤 Ваше имя : {accaunt_name}
 
-            💰 Баланс : {acc.GetAccountDataByID(call.message.chat.id)['acc_balance']}
+💰 Баланс : {acc.GetAccountDataByID(call.message.chat.id)['acc_balance']}
                     ''', reply_markup=markup)
 
 

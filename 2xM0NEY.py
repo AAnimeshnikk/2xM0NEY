@@ -281,9 +281,9 @@ f'''
             markup.row(show_name)
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                   text=f'''
-            👤 Ваше имя : {accaunt_name}
+👤 Ваше имя : {accaunt_name}
 
-            💰 Баланс : {acc.GetAccountDataByID(call.message.chat.id)['acc_balance']}
+💰 Баланс : {acc.GetAccountDataByID(call.message.chat.id)['acc_balance']}
                     ''', reply_markup=markup)
 
 

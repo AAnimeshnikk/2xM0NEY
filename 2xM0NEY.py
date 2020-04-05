@@ -5,7 +5,7 @@ from time import sleep
 import DB_account as acc
 import random
 
-
+#---
 
 # Нужные данные
 admin = '@AAnimeshnikk'

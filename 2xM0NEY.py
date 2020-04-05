@@ -29,14 +29,14 @@ def reg(message):
     first_name = message.from_user.first_name
     last_name = message.from_user.last_name
     if first_name is None:
-        first_name = "Unknown"
+        first_name = ""
     if last_name is None:
-        last_name = "dude"
+        last_name = ""
 
     if userindatabase == False and message.from_user.username == None:
         bot.send_message(message.from_user.id,
 '''
-У вас нету Telegram UserName, поетому бот будет использовать ваши имя и фамилию.
+У вас нету Telegram UserName, поэтому бот будет использовать ваши имя и фамилию.
 Если среди учасников уже есть человек с такими именем и фамилией бот добавит в конец вашей фамилии ваш telegram id
 ''')
         showed_name = first_name + ' ' + last_name
@@ -44,7 +44,12 @@ def reg(message):
         if acc.UsernameExists(showed_name) == True:
             unk = 'Unknown' + str(message.from_user.id)
             acc.CreateNewAccount(message.from_user.id, unk)
-            showed_name = first_name + ' ' + last_name  + str(message.from_user.id)
+            if first_name == "" and last_name == "":
+                showed_name = 'Unknown' + str(message.from_user.id)
+            elif first_name == '':
+                showed_name = last_name  + ' ' + str(message.from_user.id)
+            else:
+                showed_name = first_name + ' ' + last_name  + str(message.from_user.id)
             acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'False')
             acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
 
@@ -84,23 +89,31 @@ def reg(message):
 
     elif userindatabase == True:
 
-        if acc.GetAccountDataByID(message.from_user.id)['acc_name'][:7] == 'Unknown' and message.from_user.username != None:
-            acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'True')
-            acc.SetAccountDataElement(message.from_user.id, 'acc_name', message.from_user.username)
+        if message.from_user.username != None:
+                acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'True')
+                acc.SetAccountDataElement(message.from_user.id, 'acc_name', message.from_user.username)
 
-        showed_name = first_name +' '+ last_name
-        showed_name2 = first_name +' '+ last_name + str(message.from_user.id)
+        first_name = message.from_user.first_name
+        last_name = message.from_user.last_name
+        if first_name is None:
+            first_name = ""
+        if last_name is None:
+            last_name = ""
 
-        if (acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == False and acc.GetAccountDataByID(message.from_user.id)['acc_username'] != showed_name)\
-            or (acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == False and acc.GetAccountDataByID(message.from_user.id)['acc_username'] != showed_name2):
+        if first_name == '':
+            i = last_name
+        else:
+            i = first_name + ' ' + last_name
 
-            showed_name = first_name + ' ' + last_name
-            if acc.UsernameExists(showed_name) == True:
-                showed_name = first_name + ' ' + last_name + str(message.from_user.id)
-                acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
-            elif acc.UsernameExists(showed_name) == False:
-                showed_name = first_name + ' ' + last_name
-                acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+        if acc.UsernameExists(i) == True:
+            if first_name == '':
+                i = last_name + message.from_user.id
+            elif first_name != '' and last_name != '':
+                i = first_name + ' ' +last_name + ' ' + str(message.from_user.id)
+            elif first_name != '' and last_name == '':
+                i = first_name + ' ' + str(message.from_user.id)
+
+        acc.SetAccountDataElement(message.from_user.id, 'acc_username', i)
 
         main(message)
 
@@ -241,7 +254,7 @@ f'''
         markup.row(btn6,btn7)
         markup.row(btn8,btn9)
         markup.row(back)
-
+# посмотри в def reg я поправил чучуть ок
         bot.edit_message_text(chat_id = call.message.chat.id,
         message_id = call.message.message_id,
         text ='Выберите сумму для пополнения баланса : ',

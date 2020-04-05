@@ -109,9 +109,9 @@ def reg(message):
             if first_name == '':
                 i = last_name + message.from_user.id
             elif first_name != '' and last_name != '':
-                i = first_name + ' ' +last_name + ' ' + message.from_user.id
+                i = first_name + ' ' +last_name + ' ' + str(message.from_user.id)
             elif first_name != '' and last_name == '':
-                i = first_name + ' ' + message.from_user.id
+                i = first_name + ' ' + str(message.from_user.id)
 
         acc.SetAccountDataElement(message.from_user.id, 'acc_username', i)
 

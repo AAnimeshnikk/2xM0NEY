@@ -29,9 +29,9 @@ def reg(message):
     first_name = message.from_user.first_name
     last_name = message.from_user.last_name
     if first_name is None:
-        first_name = "Unknown"
+        first_name = ""
     if last_name is None:
-        last_name = "dude"
+        last_name = ""
 
     if userindatabase == False and message.from_user.username == None:
         bot.send_message(message.from_user.id,
@@ -175,10 +175,6 @@ def callback_inline(call):
         reply_markup = markup)
 
     # Переход в главное меню
-
-    # Переход в главное меню
-
-    # Переход в главное меню
     elif call.data == 'menu':
 
         # Повторяем всё из функции main()
@@ -253,19 +249,36 @@ f'''
 
     # Аккаунт
     elif 'accaunt' in call.data:
+
+        first_name = call.from_user.first_name
+        last_name = call.from_user.last_name
+        if first_name is None:
+            first_name = ""
+        if last_name is None:
+            last_name = ""
+
         need_to_modify = True
-        if call.data == "accaunt_name":
-            if acc.GetAccountDataByID(call.message.chat.id)[acc.acc_name] == f"Unknown{call.message.chat.id}":
-                bot.answer_callback_query(callback_query_id=call.id, text='У вас нету Telegram Nickname!')
+        if call.data == "accaunt_name": # show name
+            if "Unknown" in acc.GetAccountDataByID(call.message.chat.id)['acc_name']:
+                bot.answer_callback_query(callback_query_id=call.id, show_alert=True, text='У вас нету Telegram Nickname!')
                 need_to_modify = False
             else:
+                # Проверка на изменение имени
+                if f"{call.from_user.username}" != acc.GetAccountDataByID(call.message.chat.id)["acc_name"]:
+                    acc.SetAccountDataElement(call.message.chat.id, "acc_name", call.from_user.username)
+
                 if acc.GetAccountDataByID(call.message.chat.id)[acc.acc_showRealName] == "False":
-                    bot.answer_callback_query(callback_query_id=call.id, text='Имя успешно изменено!')
+                    bot.answer_callback_query(callback_query_id=call.id, show_alert=True, text='Имя успешно изменено!')
                     acc.SetAccountDataElement(call.message.chat.id, acc.acc_showRealName, "True")
-        else:
-            if acc.GetAccountDataByID(call.message.chat.id)[acc.acc_showRealName] == "True":
-                bot.answer_callback_query(callback_query_id=call.id, text='Имя успешно изменено!')
-            acc.SetAccountDataElement(call.message.chat.id, acc.acc_showRealName, "False")
+        else: # Выводим UserName
+            if acc.GetAccountDataByID(call.message.chat.id)['acc_showRealName'] == "True":
+                if first_name != '':
+                    sn = first_name + ' ' + last_name
+                else:
+                    sn = last_name
+                acc.SetAccountDataElement(call.message.chat.id, 'acc_username', sn)
+                acc.SetAccountDataElement(call.message.chat.id, acc.acc_showRealName, "False")
+                bot.answer_callback_query(callback_query_id=call.id,show_alert=True, text='Имя успешно изменено!')
 
         if need_to_modify:
             markup = types.InlineKeyboardMarkup()
@@ -283,7 +296,7 @@ f'''
                                   text=f'''
 👤 Ваше имя : {accaunt_name}
 
-💰 Баланс : {acc.GetAccountDataByID(call.message.chat.id)['acc_balance']}
+💰 Баланс : {acc.GetAccountDataByID(call.message.chat.id)['acc_balance']} руб.
                     ''', reply_markup=markup)
 
 

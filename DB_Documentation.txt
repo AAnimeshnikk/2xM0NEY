@@ -15,6 +15,7 @@ acc.SetAccountDataElement(acc_id, element, value) - для користувач�
 
 Замість тебе, ніга, 'acc_id', 'acc_name', 'acc_username', 'acc_showRealName', 'acc_balance' мона юзать acc.acc_id,
          acc.acc_name, acc.acc_username, acc.acc_showRealName, acc.acc_balance
+acc.GetElementByElement(element_to_get, element_get_by, value_get_by) повертає значення element_get_by
 
 
 

@@ -8,7 +8,8 @@ import random
 
 
 # Нужные данные
-admin = '@AAnimeshnikk'# добавиш @pypcdev пізніше ок?
+admin = '@AAnimeshnikk'
+z_admin = '@pypcdev'
 chat = 'https://t.me/twoxchat'
 news = 'https://t.me/twoxnews'
 id = '560083718' # Твой ид, что-бы бот кидал тебе все, что происходит в боте
@@ -48,7 +49,7 @@ def reg(message):
             acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
 
         elif acc.UsernameExists(showed_name) == False:
-            
+
             unk = 'Unknown' + str(message.from_user.id)
             acc.CreateNewAccount(message.from_user.id, unk)
             showed_name = first_name + ' ' + last_name
@@ -64,6 +65,7 @@ def reg(message):
         bot.send_message(message.from_user.id, f'Вы успешно зарегестрированы! \nВаш ник : {name}')
         main(message)
 
+
     elif userindatabase == False:
         acc.CreateNewAccount(message.from_user.id, message.from_user.username)
         acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'True')
@@ -76,13 +78,14 @@ def reg(message):
         elif acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == 'True':
             name = acc.GetAccountDataByID(message.from_user.id)["acc_name"]
 
-        bot.send_message(message.from_user.id, f'Вы успешно зарегестрированы! \nВаш ник : {name}')
+        bot.send_message(message.from_user.id, f'Вы успешно зарегестрированы! \nВаш ник : @{name}')
 
         main(message)
 
     elif userindatabase == True:
 
         if acc.GetAccountDataByID(message.from_user.id)['acc_name'][:7] == 'Unknown' and message.from_user.username != None:
+            acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'True')
             acc.SetAccountDataElement(message.from_user.id, 'acc_name', message.from_user.username)
 
         showed_name = first_name +' '+ last_name
@@ -101,6 +104,7 @@ def reg(message):
 
         main(message)
 
+# Главное меню
 def main(message):
     # Добавляем клавиатуру и кнопки
     markup = types.InlineKeyboardMarkup()
@@ -116,11 +120,13 @@ def main(message):
     # Отправляем сообщение с кнопками
     bot.send_message(message.from_user.id,
     f'''
-    ⭕️Главное меню :
+    ⭕️ Главное меню :
 
-    👮‍♂️Администратор : {admin}
-    💬Чат : {chat}
-    👁Новости : {news}
+    👮‍♂️ Администратор : {admin}
+    👮‍♂️ Зам. Администратора : {z_admin}
+
+    💬 Чат : {chat}
+    👁 Новости : {news}
 
     Нажмите \"Помощь🚑\" для отображения инструкции.
     Приятой игры!
@@ -137,6 +143,10 @@ def callback_inline(call):
     if call.data == 'help':
         markup = types.InlineKeyboardMarkup()
         exit = types.InlineKeyboardButton(text = 'Закрыть', callback_data = 'menu')
+        btn1 = types.InlineKeyboardButton(text='Связатся с администратором', url='https://t.me/AAnimeshnikk')
+        btn2 = types.InlineKeyboardButton(text='Связатся с зам. администратором', url='https://t.me/pypcdev')
+        markup.row(btn1)
+        markup.row(btn2)
         markup.row(exit)
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text =
 '''
@@ -164,9 +174,11 @@ def callback_inline(call):
 
     # Переход в главное меню
 
+    # Переход в главное меню
 
     # Переход в главное меню
     elif call.data == 'menu':
+
         # Повторяем всё из функции main()
         markup = types.InlineKeyboardMarkup()
         btn1 = types.InlineKeyboardButton(text = 'Аккаунт🐶', callback_data = 'accaunt')
@@ -181,9 +193,10 @@ def callback_inline(call):
         # Редактируем сообщение с кнопками
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text =
 f'''
-⭕️Главное меню:
+⭕️ Главное меню :
 
-👮‍♂️Администратор : {admin}
+👮‍♂️ Администратор : {admin}
+👮‍♂️ Зам. Администратора : {z_admin}
 💬Чат : {chat}
 👁Новости : {news}
 
@@ -202,7 +215,6 @@ f'''
         btn2 = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
         markup.row(btn)
         markup.row(btn1)
-        markup.row(btn2)
         bot.edit_message_text(chat_id = call.message.chat.id,
         message_id = call.message.message_id,
         text ='Выберите что хотите сделать : ',
@@ -236,7 +248,20 @@ f'''
 
     # Аккаунт
     elif call.data == 'accaunt':
-        pass
+        markup = types.InlineKeyboardMarkup()
+        back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
+        markup.row(back)
+        if acc.GetAccountDataByID(call.message.chat.id)['acc_showRealName'] == 'True':
+            accaunt_name = '@' + acc.GetAccountDataByID(call.message.chat.id)['acc_name']
+        elif acc.GetAccountDataByID(call.message.chat.id)['acc_showRealName'] == 'False':
+            accaunt_name = acc.GetAccountDataByID(call.message.chat.id)['acc_username']
+        bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
+        text = f'''
+👤 Ваше имя : {accaunt_name}
+
+💰 Баланс : {acc.GetAccountDataByID(call.message.chat.id)['acc_balance']}
+        ''', reply_markup = markup)
+
     # Меню фиксированных комнат
     elif call.data == 'roomsfix':
         markup = types.InlineKeyboardMarkup()

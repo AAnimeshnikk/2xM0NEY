@@ -32,7 +32,7 @@ def CreateNewAccount(acc_id, acc_name): # create new account for useeeee
     database.commit()
 
 def SetAccountDataElement(acc_id, element, value): # update the database elementt o value by acc_id
-    data.execute("UPDATE Accounts SET %s = '%s' WHERE acc_id = %s" % (element, value, acc_id), multi=True)
+    data.execute("UPDATE Accounts SET %s = '%s' WHERE acc_id = %s" % (element, value, acc_id))
     database.commit()
 
 def GetElementByElement(element_to_get, element_get_by, value_get_by):

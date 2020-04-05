@@ -29,9 +29,9 @@ def reg(message):
     first_name = message.from_user.first_name
     last_name = message.from_user.last_name
     if first_name is None:
-        first_name = "Unknown" # input something WHERE
+        first_name = "Unknown"
     if last_name is None:
-        last_name = "dude" # input something WHERE
+        last_name = "dude" 
 
     if userindatabase == False and message.from_user.username == None:
         bot.send_message(message.from_user.id,

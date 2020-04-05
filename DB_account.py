@@ -16,6 +16,7 @@ def UsernameExists(username):
         return True
 
 def GetAccountDataByID(acc_id):
+    print("getting data from user with id: %s" % acc_id)
     data.execute("SELECT * FROM Accounts WHERE acc_id = '%s'" % acc_id) # command for sql
     _accountData = data.fetchall()[0]  # result
     accountData = {}

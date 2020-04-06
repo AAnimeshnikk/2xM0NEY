@@ -263,7 +263,7 @@ f'''
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
         text =
         f'''
-👤 Отображаемий никнейм: {s}
+👤 Отображаемый никнейм: {s}
 
 💰 Баланс: {b} руб.
 

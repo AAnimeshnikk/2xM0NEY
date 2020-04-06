@@ -38,21 +38,23 @@ def reg(message):
 У вас нету Telegram Username, поетому бот будет использовать ваши имя и фамилию.
 Если среди учасников уже есть человек с такими именем и фамилией бот добавит в конец вашей фамилии ваш telegram id
 ''')
-        showed_name = first_name + ' ' + last_name
-        if acc.UsernameExists(showed_name) == True:
-            unk = 'Unknown' + str(message.from_user.id)
-            acc.CreateNewAccount(message.from_user.id, unk)
-            showed_name = first_name + ' ' + last_name  + str(message.from_user.id)
-            acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'False')
-            acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
-
-        elif acc.UsernameExists(showed_name) == False:
-
-            unk = 'Unknown' + str(message.from_user.id)
-            acc.CreateNewAccount(message.from_user.id, unk)
+        if first_name != '' and last_name != '':
             showed_name = first_name + ' ' + last_name
-            acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'False')
-            acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+        elif last_name == '':
+            showed_name = first_name
+
+        unk = 'Unknown' + str(message.from_user.id)
+        acc.CreateNewAccount(message.from_user.id, unk)
+        acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'False')
+        acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+
+        # Старое :
+        # if acc.UsernameExists(showed_name) == True:
+        #     unk = 'Unknown' + str(message.from_user.id)
+        #     acc.CreateNewAccount(message.from_user.id, unk)
+        #     showed_name = first_name + ' ' + last_name  + str(message.from_user.id)
+        #     acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'False')
+        #     acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
 
         if acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == 'False':
             name = acc.GetAccountDataByID(message.from_user.id)["acc_username"]
@@ -60,15 +62,24 @@ def reg(message):
         elif acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == 'True':
             name = acc.GetAccountDataByID(message.from_user.id)["acc_name"]
 
-        bot.send_message(message.from_user.id, f'Вы успешно зарегестрированы! \nВаш ник : {name}')
+        bot.send_message(message.from_user.id, f'Вы успешно зарегестрированы! \nОтображаемое имя : {name}')
         main(message)
 
 
     elif userindatabase == False:
+
         acc.CreateNewAccount(message.from_user.id, message.from_user.username)
         acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'True')
-        unk = 'Unknown' + str(message.from_user.id)
-        acc.SetAccountDataElement(message.from_user.id, 'acc_username', unk)
+
+        if first_name != '' and last_name != '':
+            showed_name = first_name + ' ' + last_name
+        elif last_name == '':
+            showed_name = first_name
+        if acc.UsernameExists(showed_name) == 'True' and acc.GetElementByElement("acc_id", "acc_username", showed_name) != str(message.from_user.id):
+            showed_name = showed_name + ' ' + str(message.from_user.id)
+            acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+        else:
+            acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
 
         if acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == 'False':
             name = acc.GetAccountDataByID(message.from_user.id)["acc_username"]
@@ -76,29 +87,24 @@ def reg(message):
         elif acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == 'True':
             name = acc.GetAccountDataByID(message.from_user.id)["acc_name"]
 
-        bot.send_message(message.from_user.id, f'Вы успешно зарегестрированы! \nВаш ник : @{name}')
+        bot.send_message(message.from_user.id, f'Вы успешно зарегестрированы! \nОтображаемое имя : @{name}')
 
         main(message)
 
     elif userindatabase == True:
-
-        if acc.GetAccountDataByID(message.from_user.id)['acc_name'][:7] == 'Unknown' and message.from_user.username != None:
-            acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'True')
-            acc.SetAccountDataElement(message.from_user.id, 'acc_name', message.from_user.username)
-
-        showed_name = first_name +' '+ last_name
-        showed_name2 = first_name +' '+ last_name + str(message.from_user.id)
-
-        if (acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == False and acc.GetAccountDataByID(message.from_user.id)['acc_username'] != showed_name)\
-            or (acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == False and acc.GetAccountDataByID(message.from_user.id)['acc_username'] != showed_name2):
-
+        if first_name != '' and last_name != '':
             showed_name = first_name + ' ' + last_name
-            if acc.UsernameExists(showed_name) == True:
-                showed_name = first_name + ' ' + last_name + str(message.from_user.id)
-                acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
-            elif acc.UsernameExists(showed_name) == False:
-                showed_name = first_name + ' ' + last_name
-                acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+        elif last_name == '':
+            showed_name = first_name
+
+        if acc.UsernameExists(showed_name) == 'True' and acc.GetElementByElement("acc_id", "acc_username", showed_name) != str(message.from_user.id):
+            showed_name = showed_name + ' ' + str(message.from_user.id)
+            acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+        else:
+            acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+
+        if message.from_user.username != None:
+            acc.SetAccountDataElement(message.from_user.id, 'acc_name', message.from_user.username)
 
         main(message)
 
@@ -342,4 +348,4 @@ f'''
         text = 'Выберите комнату :', reply_markup = markup)
 
 # Включаем цикл для бота
-bot.polling(none_stop = True)
+bot.polling(none_stop=True, interval=5, timeout=5)

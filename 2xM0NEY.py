@@ -48,7 +48,7 @@ def reg(message):
 
         conn.UpdateUserName(message.from_user.id, username)
 
-        bot.send_message(message.from_user.id, "✅ Вас успешно зарегестрировано. Текущий видемий никнейм: %s" % telegram_name)
+        bot.send_message(message.from_user.id, "✅ Вас успешно зарегестрировано. Текущий видемый никнейм: %s" % telegram_name)
 
 
 
@@ -199,38 +199,38 @@ f'''
 
     # Аккаунт
     elif call.data == "account":
-        conn = NewConnectionToAccountsDatabase()
+            conn = NewConnectionToAccountsDatabase()
 
-        data = conn.GetFullAccountDataByID(call.message.chat.id)
-        show_name = ""
-        if data[PRIMARY_NAME] == TELEGRAM_NAME:
-            show_name = data[TELEGRAM_NAME]
-        else:
-            show_name = data[USER_NAME]
+            data = conn.GetFullAccountDataByID(call.message.chat.id)
+            show_name = ""
+            if data[PRIMARY_NAME] == TELEGRAM_NAME:
+                show_name = data[TELEGRAM_NAME]
+            else:
+                show_name = data[USER_NAME]
 
-        markup = types.InlineKeyboardMarkup()
-        if data[PRIMARY_NAME] == TELEGRAM_NAME:
-            btn1 = types.InlineKeyboardButton("Включить показ 2xM0NEY Username", callback_data="turn_user_name")
-        else:
-            btn1 = types.InlineKeyboardButton("Включить показ Telegram Nickname", callback_data="turn_telegram_name")
-        btn2 = types.InlineKeyboardButton("Изменить 2xM0NEY Username", callback_data="change_user_name")
-        back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
-        markup.row(btn1)
-        markup.row(btn2)
-        markup.row(back)
+            markup = types.InlineKeyboardMarkup()
+            if data[PRIMARY_NAME] == TELEGRAM_NAME:
+                btn1 = types.InlineKeyboardButton("Включить показ 2xM0NEY Username", callback_data="turn_user_name")
+            else:
+                btn1 = types.InlineKeyboardButton("Включить показ Telegram Nickname", callback_data="turn_telegram_name")
+            btn2 = types.InlineKeyboardButton("Изменить 2xM0NEY Username", callback_data="change_user_name")
+            back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
+            markup.row(btn1)
+            markup.row(btn2)
+            markup.row(back)
 
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-        text=f'''
-        👁‍🗨 Видимий никнейм: {show_name}
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+            text=f'''
+            👁‍🗨 Видимый никнейм: {show_name}
 
 💰 Текущий баланс: {data[BALANCE]} руб.
 
 🕒 Дата регистрации: {data[REGISTRATION_DATE]}
 
-        ''', reply_markup=markup)
+            ''', reply_markup=markup)
 
-        conn.CloseConnection()
-        del conn
+            conn.CloseConnection()
+            del conn
 
     elif call.data == "turn_user_name":
         conn = NewConnectionToAccountsDatabase()
@@ -245,7 +245,7 @@ f'''
         markup.row(back)
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-        text='✅ Успешно! Теперь видимий никнейм: %s' % showed_name, reply_markup=markup)
+        text='✅ Успешно! Теперь видимый никнейм: %s' % showed_name, reply_markup=markup)
 
 
     elif call.data == "turn_telegram_name":
@@ -261,44 +261,44 @@ f'''
         markup.row(back)
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-        text='✅ Успешно! Теперь видимий никнейм: %s' % showed_name, reply_markup=markup)
+        text='✅ Успешно! Теперь видимый никнейм: %s' % showed_name, reply_markup=markup)
+
 
     elif call.data == "change_user_name":
-        new_user_name = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         markup = types.InlineKeyboardMarkup()
         back = types.InlineKeyboardButton(text='Назад🔙', callback_data='account')
         markup.row(back)
-        bot.send_message(call.message.chat.id, "⌨️ Введите новое имя", disable_web_page_preview=True)
+        bot.send_message(call.message.chat.id, "⌨️ Введите новое имя")
 
+
+        #pidar, zakinchis pislya togo yak tebe vizvali!!!!!!!1 SUKA BLED
         @bot.message_handler(func=lambda message: True, content_types=['text'])
         def change_name(message):
             if len(message.text) > 32:
-                bot.send_message(call.message.chat.id, "❌ Думаю тебе и 32 символов хватит с головой для оригинального никнейма!. ⌨️ Введите новое имя", disable_web_page_preview=True)
+                bot.send_message(message.chat.id, "❌ Думаю тебе и 32 символов хватит с головой для оригинального никнейма!. \n⌨️ Введите новое имя")
             else:
-                bot.send_message(call.message.chat.id, "🌐 Проверка на оригинальность...", disable_web_page_preview=True)
+                bot.send_message(message.chat.id, "🌐 Проверка на оригинальность...")
                 conn = NewConnectionToAccountsDatabase()
-                data = conn.GetFullAccountDataByID(message.from_user.id)
+                data = conn.GetFullAccountDataByID(message.chat.id)
                 try:
                     dt = conn.GetFullAccountDataByUserName(message.text)
-                    if dt[ID] == message.from_user.id:
-                        bot.send_message(call.message.chat.id, "❌ Зачем менять свое имя на тоже самое? ⌨️ Введите новое имя",
+                    if dt[ID] == message.chat.id:
+                        bot.send_message(message.chat.id, "❌ Зачем менять свое имя на тоже самое? \n⌨️ Введите новое имя",
                                          disable_web_page_preview=True)
                     else:
-                        bot.send_message(call.message.chat.id, "❌ Такой уже есть, думаю тебе лутше иметь оригинальний никнейм, не так ли? ⌨️ Введите новое имя", disable_web_page_preview=True)
+                        bot.send_message(message.chat.id, "❌ Такой уже есть, думаю тебе лучше иметь оригинальний никнейм, не так ли? \n⌨️ Введите новое имя")
                 except:
-                    conn.UpdateUserName(message.from_user.id, message.text)
-                    bot.send_message(call.message.chat.id, "✅ Отличний оригинальний никнейм! Никнейм изменен! ⌨️ Чтоби изменить еще раз напишите новий никнейм!",
-                                     disable_web_page_preview=True, reply_markup=markup)
+                    conn.UpdateUserName(message.chat.id, message.text)
+                    msg = bot.send_message(message.chat.id, "✅ Отличний оригинальний никнейм! Никнейм изменен!",
+                                      reply_markup=markup)
 
+                    bot.register_next_step_handler(msg, kostya)
                 conn.CommitToDatabase()
                 conn.CloseConnection()
                 del conn
 
-
-
-
-
-
+        def kostya(message):
+            pass
     elif call.data == 'roomsfix':
         markup = types.InlineKeyboardMarkup()
         btn = types.InlineKeyboardButton(text = '[0/10] 15 руб №1', callback_data = 'roomfix1')

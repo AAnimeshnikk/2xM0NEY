@@ -281,7 +281,8 @@ f'''
                 try:
                     dt = conn.GetFullAccountDataByUserName(message.text)
                     if dt[ID] == message.from_user.id:
-                        raise Exception
+                        bot.send_message(call.message.chat.id, "❌ Зачем менять свое имя на тоже самое? ⌨️ Введите новое имя",
+                                         disable_web_page_preview=True)
                     else:
                         bot.send_message(call.message.chat.id, "❌ Такой уже есть, думаю тебе лутше иметь оригинальний никнейм, не так ли? ⌨️ Введите новое имя", disable_web_page_preview=True)
                 except:

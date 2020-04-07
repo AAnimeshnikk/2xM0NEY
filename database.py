@@ -39,7 +39,7 @@ class NewConnectionToAccountsDatabase:
             data["user_name"] = result[2]
             data["primary_name"] = result[3]
             data["balance"] = result[4]
-            data["registration_time"] = result[5]
+            data["registration_date"] = result[5]
             return data
         except:
             raise ValueError("There are no users with '%s' id" % id)
@@ -54,7 +54,7 @@ class NewConnectionToAccountsDatabase:
             data["user_name"] = result[2]
             data["primary_name"] = result[3]
             data["balance"] = result[4]
-            data["registration_time"] = result[5]
+            data["registration_date"] = result[5]
             return data
         except:
             raise ValueError("There are no users with '%s' telegram_name" % telegram_name)
@@ -69,7 +69,7 @@ class NewConnectionToAccountsDatabase:
             data["user_name"] = result[2]
             data["primary_name"] = result[3]
             data["balance"] = result[4]
-            data["registration_time"] = result[5]
+            data["registration_date"] = result[5]
             return data
         except:
             raise ValueError("There are no users with '%s' user_name" % user_name)
@@ -77,7 +77,7 @@ class NewConnectionToAccountsDatabase:
     def CreateNewAccount(self, id):
         try:
             self.__changes.append("INSERT INTO Accounts(id, telegram_name, user_name, primary_name, balance, registration_date) VALUES(%s, '@UnknownTelegramUser', 'UnknownUser', 'telegram_name', 0, '%s')" % (
-                id, str(date.today()).replace("-", " ").replace("-", " ")
+                id, str(date.today())
             ))
         except:
             raise ValueError("Invalid argument")

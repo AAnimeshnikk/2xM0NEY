@@ -1,8 +1,8 @@
 # Импортируем нужные библиотеки
 import telebot
+from database import *
 from telebot import types
 from time import sleep
-import DB_account as acc
 import random
 
 
@@ -23,90 +23,40 @@ bot = telebot.TeleBot('1072358209:AAHiQ__0NsNCsQEbld73xv25zjr-zGWATds')
 # Заставляем бота мониторить чат на наличие команды /start
 @bot.message_handler(commands=['start'])
 def reg(message):
-    userindatabase = acc.AccountExistsByID(message.from_user.id)
-
-    first_name = message.from_user.first_name
-    last_name = message.from_user.last_name
-    if first_name is None:
-        first_name = ""
-    if last_name is None:
-        last_name = ""
-
-    if userindatabase == False and message.from_user.username == None:
-        bot.send_message(message.from_user.id,
-'''
-У вас нету Telegram Username, поетому бот будет использовать ваши имя и фамилию.
-Если среди учасников уже есть человек с такими именем и фамилией бот добавит в конец вашей фамилии ваш telegram id
-''')
-        if first_name != '' and last_name != '':
-            showed_name = first_name + ' ' + last_name
-        elif last_name == '':
-            showed_name = first_name
-
-        unk = 'Unknown' + str(message.from_user.id)
-        acc.CreateNewAccount(message.from_user.id, unk)
-        acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'False')
-        acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
-
-        # Старое :
-        # if acc.UsernameExists(showed_name) == True:
-        #     unk = 'Unknown' + str(message.from_user.id)
-        #     acc.CreateNewAccount(message.from_user.id, unk)
-        #     showed_name = first_name + ' ' + last_name  + str(message.from_user.id)
-        #     acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'False')
-        #     acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
-
-        if acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == 'False':
-            name = acc.GetAccountDataByID(message.from_user.id)["acc_username"]
-
-        elif acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == 'True':
-            name = acc.GetAccountDataByID(message.from_user.id)["acc_name"]
-
-        bot.send_message(message.from_user.id, f'Вы успешно зарегестрированы! \nОтображаемое имя : {name}')
-        main(message)
-
-
-    elif userindatabase == False:
-
-        acc.CreateNewAccount(message.from_user.id, message.from_user.username)
-        acc.SetAccountDataElement(message.from_user.id, 'acc_showRealName', 'True')
-
-        if first_name != '' and last_name != '':
-            showed_name = first_name + ' ' + last_name
-        elif last_name == '':
-            showed_name = first_name
-        if acc.UsernameExists(showed_name) == 'True' and acc.GetElementByElement("acc_id", "acc_username", showed_name) != str(message.from_user.id):
-            showed_name = showed_name + ' ' + str(message.from_user.id)
-            acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+    conn = NewConnectionToAccountsDatabase()
+    try:
+        data = conn.GetFullAccountDataByID(message.from_user.id)
+        if data[TELEGRAM_NAME] == "@UnknownTelegramUser%s" % message.from_user.id and message.from_user.username is not None:
+            conn.UpdateTelegramName(message.from_user.id, "@%s" % message.from_user.username)
+    except:
+        conn.CreateNewAccount(message.from_user.id)
+        telegram_name = ""
+        if message.from_user.username is not None:
+            conn.UpdateTelegramName(message.from_user.id, "@%s"% message.from_user.username)
+            telegram_name = "@%s"% message.from_user.username
         else:
-            acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+            conn.UpdateTelegramName(message.from_user.id, "@UnknownTelegramUser%s" % message.from_user.id)
+            telegram_name = "@UnknownTelegramUser%s" % message.from_user.id
 
-        if acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == 'False':
-            name = acc.GetAccountDataByID(message.from_user.id)["acc_username"]
-
-        elif acc.GetAccountDataByID(message.from_user.id)['acc_showRealName'] == 'True':
-            name = acc.GetAccountDataByID(message.from_user.id)["acc_name"]
-
-        bot.send_message(message.from_user.id, f'Вы успешно зарегестрированы! \nОтображаемое имя : @{name}')
-
-        main(message)
-
-    elif userindatabase == True:
-        if first_name != '' and last_name != '':
-            showed_name = first_name + ' ' + last_name
-        elif last_name == '':
-            showed_name = first_name
-
-        if acc.UsernameExists(showed_name) == 'True' and acc.GetElementByElement("acc_id", "acc_username", showed_name) != str(message.from_user.id):
-            showed_name = showed_name + ' ' + str(message.from_user.id)
-            acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+        username = ""
+        if message.from_user.first_name is not None and message.from_user.last_name is not None:
+            username = message.from_user.first_name + " " + message.from_user.last_name
+        elif message.from_user.first_name is not None:
+            username = message.from_user.first_name
         else:
-            acc.SetAccountDataElement(message.from_user.id, 'acc_username', showed_name)
+            username = message.from_user.last_name
 
-        if message.from_user.username != None:
-            acc.SetAccountDataElement(message.from_user.id, 'acc_name', message.from_user.username)
+        conn.UpdateUserName(message.from_user.id, username)
 
-        main(message)
+        bot.send_message(message.from_user.id, "✅ Вас успешно зарегестрировано. Текущий видемий никнейм: %s" % telegram_name)
+
+
+
+    conn.CommitToDatabase()
+    conn.CloseConnection()
+    del conn
+
+    main(message)
 
 # Главное меню
 def main(message):
@@ -249,52 +199,104 @@ f'''
 
     # Аккаунт
     elif call.data == "account":
-        markup = types.InlineKeyboardMarkup()
-        s = ""
-        b = acc.GetAccountDataByID(call.message.chat.id)["acc_balance"]
-        if acc.GetAccountDataByID(call.message.chat.id)["acc_showRealName"] == "True":
-            btn1 = types.InlineKeyboardButton(text = "Использовать 2xM0NEY Username", callback_data = "account_show_username")
-            s = "@"+acc.GetAccountDataByID(call.message.chat.id)["acc_name"]
-        else:
-            btn1 = types.InlineKeyboardButton(text = "Использовать Telegram Nickname", callback_data = "account_show_name")
-            s = acc.GetAccountDataByID(call.message.chat.id)["acc_username"]
+        conn = NewConnectionToAccountsDatabase()
 
-        try:
-            s = s.replace("@Unknown"+str(call.message.chat.id), "Unknown"+str(call.message.chat.id))
-        except:
-            pass
+        data = conn.GetFullAccountDataByID(call.message.chat.id)
+        show_name = ""
+        if data[PRIMARY_NAME] == TELEGRAM_NAME:
+            show_name = data[TELEGRAM_NAME]
+        else:
+            show_name = data[USER_NAME]
+
+        markup = types.InlineKeyboardMarkup()
+        if data[PRIMARY_NAME] == TELEGRAM_NAME:
+            btn1 = types.InlineKeyboardButton("Включить показ 2xM0NEY Username", callback_data="turn_user_name")
+        else:
+            btn1 = types.InlineKeyboardButton("Включить показ Telegram Nickname", callback_data="turn_telegram_name")
+        btn2 = types.InlineKeyboardButton("Изменить 2xM0NEY Username", callback_data="change_user_name")
         back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'menu')
         markup.row(btn1)
+        markup.row(btn2)
         markup.row(back)
-        bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-        text =
-        f'''
-👤 Отображаемый никнейм: {s}
 
-💰 Баланс: {b} руб.
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+        text=f'''
+        👁‍🗨 Видимий никнейм: {show_name}
 
-        '''
-        , reply_markup = markup)
+💰 Текущий баланс: {data[BALANCE]} руб.
 
-    elif call.data == "account_show_name":
-        acc.SetAccountDataElement(call.message.chat.id, "acc_showRealName", "True")
+🕒 Дата регистрации: {data[REGISTRATION_DATE]}
+
+        ''', reply_markup=markup)
+
+        conn.CloseConnection()
+        del conn
+
+    elif call.data == "turn_user_name":
+        conn = NewConnectionToAccountsDatabase()
+        showed_name = conn.GetFullAccountDataByID(call.message.chat.id)[USER_NAME]
+        conn.UpdatePrimaryName(call.message.chat.id, USER_NAME)
+        conn.CommitToDatabase()
+        conn.CloseConnection()
+        del conn
+
         markup = types.InlineKeyboardMarkup()
-        back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'account')
+        back = types.InlineKeyboardButton(text='Назад🔙', callback_data='account')
         markup.row(back)
-        bot.edit_message_text(chat_id = call.message.chat.id,
-        message_id = call.message.message_id,
-        text = "✅ Успешно! Используеться Telegram Nickname: %s" % acc.GetAccountDataByID(call.message.chat.id)["acc_name"],
-        reply_markup = markup)
 
-    elif call.data == "account_show_username":
-        acc.SetAccountDataElement(call.message.chat.id, "acc_showRealName", "False")
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+        text='✅ Успешно! Теперь видимий никнейм: %s' % showed_name, reply_markup=markup)
+
+
+    elif call.data == "turn_telegram_name":
+        conn = NewConnectionToAccountsDatabase()
+        showed_name = conn.GetFullAccountDataByID(call.message.chat.id)[TELEGRAM_NAME]
+        conn.UpdatePrimaryName(call.message.chat.id, TELEGRAM_NAME)
+        conn.CommitToDatabase()
+        conn.CloseConnection()
+        del conn
+
         markup = types.InlineKeyboardMarkup()
-        back = types.InlineKeyboardButton(text = 'Назад🔙', callback_data = 'account')
+        back = types.InlineKeyboardButton(text='Назад🔙', callback_data='account')
         markup.row(back)
-        bot.edit_message_text(chat_id = call.message.chat.id,
-        message_id = call.message.message_id,
-        text = "✅ Успешно! Используеться 2xM0NEY Username: %s" % acc.GetAccountDataByID(call.message.chat.id)["acc_username"],
-        reply_markup = markup)
+
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+        text='✅ Успешно! Теперь видимий никнейм: %s' % showed_name, reply_markup=markup)
+
+    elif call.data == "change_user_name":
+        new_user_name = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        markup = types.InlineKeyboardMarkup()
+        back = types.InlineKeyboardButton(text='Назад🔙', callback_data='account')
+        markup.row(back)
+        bot.send_message(call.message.chat.id, "⌨️ Введите новое имя", disable_web_page_preview=True)
+
+        @bot.message_handler(func=lambda message: True, content_types=['text'])
+        def change_name(message):
+            if len(message.text) > 32:
+                bot.send_message(call.message.chat.id, "❌ Думаю тебе и 32 символов хватит с головой для оригинального никнейма!. ⌨️ Введите новое имя", disable_web_page_preview=True)
+            else:
+                bot.send_message(call.message.chat.id, "🌐 Проверка на оригинальность...", disable_web_page_preview=True)
+                conn = NewConnectionToAccountsDatabase()
+                data = conn.GetFullAccountDataByID(message.from_user.id)
+                try:
+                    dt = conn.GetFullAccountDataByUserName(message.text)
+                    if dt[ID] == message.from_user.id:
+                        raise Exception
+                    else:
+                        bot.send_message(call.message.chat.id, "❌ Такой уже есть, думаю тебе лутше иметь оригинальний никнейм, не так ли? ⌨️ Введите новое имя", disable_web_page_preview=True)
+                except:
+                    conn.UpdateUserName(message.from_user.id, message.text)
+                    bot.send_message(call.message.chat.id, "✅ Отличний оригинальний никнейм! Никнейм изменен! ⌨️ Чтоби изменить еще раз напишите новий никнейм!",
+                                     disable_web_page_preview=True, reply_markup=markup)
+
+                conn.CommitToDatabase()
+                conn.CloseConnection()
+                del conn
+
+
+
+
+
 
     elif call.data == 'roomsfix':
         markup = types.InlineKeyboardMarkup()
@@ -348,4 +350,4 @@ f'''
         text = 'Выберите комнату :', reply_markup = markup)
 
 # Включаем цикл для бота
-bot.polling(none_stop=True, interval=5, timeout=5)
+bot.polling(none_stop=True)

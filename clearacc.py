@@ -7,7 +7,7 @@ database = mysql.connector.connect(  # connecting to database
         )
 
 sql_data_executor = database.cursor()
-sql_data_executor.execute("DELETE * FROM Accounts")
+sql_data_executor.execute("DELETE FROM Accounts")
 database.commit()
 sql_data_executor.close()
 database.close()

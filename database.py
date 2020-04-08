@@ -12,7 +12,6 @@ REGISTRATION_DATE = "registration_date"
 CURRENT_ONLINE = "current_online"
 MAX_ONLINE = "max_online"
 START_ONLINE = "start_online"
-STATUS = "status"
 DATA = "data"
 CASH_SUM = "cash_sum"
 
@@ -137,7 +136,7 @@ class NewConnectionToFixedRoomsDatabase:
         a = 0
         for x in result:
             a += 1
-            data[str(a)] = x
+            data[str(a)] = x[0]
         return data
 
     def GetAllFixedRoomData(self, id):
@@ -148,15 +147,47 @@ class NewConnectionToFixedRoomsDatabase:
         data["current_online"] = result[1]
         data["max_online"] = result[2]
         data["start_online"] = result[3]
-        data["status"] = result[4]
-        data["data"] = result[5]
-        data["cash_sum"] = result[6]
+        data["data"] = result[4]
+        data["cash_sum"] = result[5]
         return data
+
+    def UpdateRoomCurrentOnline(self, id, new_online):
+        self.__changes.append("UPDATE RoomsFixed SET current_online = %s WHERE id = %s" % (new_online, id))
+
+    def IncrementRoomCurrentOnline(self, id):
+        online = self.GetAllFixedRoomsOnline()[str(id)]
+        self.UpdateRoomCurrentOnline(id, online+1)
+
+    def DecrementRoomCurrentOnline(self, id):
+        online = self.GetAllFixedRoomsOnline()[str(id)]
+        self.UpdateRoomCurrentOnline(id, online - 1)
+
+    def UpdateRoomMaxOnline(self, id, new_online):
+        self.__changes.append("UPDATE RoomsFixed SET max_online = %s WHERE id = %s" % (new_online, id))
+
+    def UpdateRoomStartOnline(self, id, new_online):
+        self.__changes.append("UPDATE RoomsFixed SET start_online = %s WHERE id = %s" % (new_online, id))
+
+    def UpdateRoomCashSum(self, id, new_cash_sum):
+        self.__changes.append("UPDATE RoomsFixed SET cash_sum = %s WHERE id = %s" % (new_cash_sum, id))
 
     def CommitToDatabase(self):
         for change in self.__changes:
             self.__sql_data_executor.execute(change)
         self.__database.commit()
+
+    def AddNewUserToRoom(self, rid, uid, data):
+        data += "%s " % (uid)
+        self.__changes.append("UPDATE RoomsFixed SET data = '%s' WHERE id = %s" % (data, rid))
+
+    def GetAllUsersFromRoom(self, id):
+        self.__sql_data_executor.execute("SELECT data FROM RoomsFixed WHERE id = %s" % id)
+        data = []
+        for user in self.__sql_data_executor.fetchall()[0][0].split():
+            data.append(int(user))
+        return data
+
+
 
     def CloseConnection(self):
         self.__sql_data_executor.close()
@@ -171,4 +202,3 @@ class NewConnectionToFixedRoomsDatabase:
             data,
             cash_sum
         ))
-

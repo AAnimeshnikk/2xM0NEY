@@ -2,7 +2,7 @@
 import telebot
 from database import *
 from telebot import types
-from time import sleep
+from time import sleep, localtime, strftime
 import random
 
 
@@ -23,6 +23,7 @@ bot = telebot.TeleBot('1072358209:AAHiQ__0NsNCsQEbld73xv25zjr-zGWATds')
 # Заставляем бота мониторить чат на наличие команды /start
 
 NAME_CHANGED = True
+
 @bot.message_handler(commands=['start'])
 def reg(message):
     conn = NewConnectionToAccountsDatabase()
@@ -311,20 +312,24 @@ f'''
     elif call.data == 'roomsfix':
         conn = NewConnectionToFixedRoomsDatabase()
         onlines = conn.GetAllFixedRoomsOnline()
+        conn.CloseConnection()
+        del conn
+
+        t = localtime()
+        current_time = strftime("%H:%M:%S", t)
 
         markup = types.InlineKeyboardMarkup()
-        btn = types.InlineKeyboardButton(text=f'[{onlines["1"]}/10] 15 руб №1', callback_data='roomunfix1')
-        btn1 = types.InlineKeyboardButton(text=f'[{onlines["2"]}/10] 15 руб №2', callback_data = 'roomfix2')
-        btn2 = types.InlineKeyboardButton(text=f'[{onlines["3"]}/10] 30 руб №3', callback_data = 'roomfix3')
-        btn3 = types.InlineKeyboardButton(text=f'[{onlines["4"]}/10] 50 руб №4', callback_data = 'roomfix4')
-        btn4 = types.InlineKeyboardButton(text=f'[{onlines["5"]}/10] 100 руб №5', callback_data = 'roomfix5')
-        btn5 = types.InlineKeyboardButton(text=f'[{onlines["6"]}/10] 250 руб №6', callback_data = 'roomfix6')
-        btn6 = types.InlineKeyboardButton(text=f'[{onlines["7"]}/10] 500 руб №7', callback_data = 'roomfix7')
-        btn7 = types.InlineKeyboardButton(text=f'[{onlines["8"]}/10] 1000 руб №8', callback_data = 'roomfix8')
-        btn8 = types.InlineKeyboardButton(text=f'[{onlines["9"]}/10] 2500 руб №9', callback_data = 'roomfix9')
-        btn9 = types.InlineKeyboardButton(text=f'[{onlines["10"]}/10] 5000 руб №10', callback_data = 'roomfix10')
-        btn10 = types.InlineKeyboardButton(text="🔄️ Обновить", callback_data="updatefix")
-
+        btn = types.InlineKeyboardButton(text=f'[{onlines["1"]}/10] 15 руб №1', callback_data='join_roomfix1')
+        btn1 = types.InlineKeyboardButton(text=f'[{onlines["2"]}/10] 15 руб №2', callback_data = 'join_roomfix2')
+        btn2 = types.InlineKeyboardButton(text=f'[{onlines["3"]}/10] 30 руб №3', callback_data = 'join_roomfix3')
+        btn3 = types.InlineKeyboardButton(text=f'[{onlines["4"]}/10] 50 руб №4', callback_data = 'join_roomfix4')
+        btn4 = types.InlineKeyboardButton(text=f'[{onlines["5"]}/10] 100 руб №5', callback_data = 'join_roomfix5')
+        btn5 = types.InlineKeyboardButton(text=f'[{onlines["6"]}/10] 250 руб №6', callback_data = 'join_roomfix6')
+        btn6 = types.InlineKeyboardButton(text=f'[{onlines["7"]}/10] 500 руб №7', callback_data = 'join_roomfix7')
+        btn7 = types.InlineKeyboardButton(text=f'[{onlines["8"]}/10] 1000 руб №8', callback_data = 'join_roomfix8')
+        btn8 = types.InlineKeyboardButton(text=f'[{onlines["9"]}/10] 2500 руб №9', callback_data = 'join_roomfix9')
+        btn9 = types.InlineKeyboardButton(text=f'[{onlines["10"]}/10] 5000 руб №10', callback_data = 'join_roomfix10')
+        btn10 = types.InlineKeyboardButton(text=f"🔄️ Обновить (последнее обновление {current_time})", callback_data="roomsfix")
         back = types.InlineKeyboardButton(text = '🔙 Назад', callback_data = 'menu')
 
         markup.row(btn,btn1)
@@ -332,18 +337,70 @@ f'''
         markup.row(btn4, btn5)
         markup.row(btn6,btn7)
         markup.row(btn8,btn9)
-        markup.row(btn10, back)
+        markup.row(btn10)
+        markup.row(back)
 
         bot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id,
-        text = 'Выберите комнату :', reply_markup = markup)
+        text = 'Выберите комнату', reply_markup = markup)
+
+    elif "join_roomfix" in call.data:
+        conn = NewConnectionToFixedRoomsDatabase()
+        onlines = conn.GetAllFixedRoomsOnline()
+        join_room_id = int(call.data[12:])
+        data = conn.GetAllFixedRoomData(join_room_id)
+
+        if onlines[str(join_room_id)] == data[MAX_ONLINE]:
+            markup = types.InlineKeyboardMarkup()
+            back = types.InlineKeyboardButton(text = '🔙 Назад', callback_data = 'roomsfix')
+            markup.row(back)
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                  text='❌ Комната заполненая, виберете другую!', reply_markup=markup)
+        else:
+            conn.AddNewUserToRoom(join_room_id, call.message.chat.id)
+            conn.IncrementRoomCurrentOnline(join_room_id)
+            conn.CommitToDatabase()
+            bot.delete_message(call.message.chat.id, call.message.message_id)
+            bot.send_message(chat_id=call.message.chat.id, text=f"Вы присоединились к комнате с фиксированной ставкой - {data[CASH_SUM]}руб. Игра начинается при онлайне в 3 человека, когда начинает идти таймер на 2 минуты. Через две минуты будет выбран один победитель - который получит 95% общего банка (5% админам на мивинку). То есть баланс этого игрока будет увеличен на 95% от общего банка.")
+            conn.CloseConnection()
+            del conn
+
+            current_online = 0
+            while True:
+                conn = NewConnectionToFixedRoomsDatabase()
+                online = conn.GetAllFixedRoomsOnline()[str(join_room_id)]
+                data = conn.GetAllFixedRoomData(join_room_id)
+                max_online = data[MAX_ONLINE]
+                if current_online != online:
+                    acc_conn = NewConnectionToAccountsDatabase()
+                    acc_data = acc_conn.GetFullAccountDataByID(conn.GetAllUsersFromRoom(join_room_id)[-1])
+                    if acc_data[PRIMARY_NAME] == TELEGRAM_NAME:
+                        name = acc_data[TELEGRAM_NAME]
+                    else:
+                        name = acc_data[USER_NAME]
+                    current_online = online
+                    bot.send_message(chat_id = call.message.chat.id,
+                                            text=f"Присоединился игрок {name}. Текущий онлайн: {current_online}/{max_online}")
+                if online >= 1:
+                    break
+                conn.CloseConnection()
+                del conn
+                sleep(1)
+
+
+        conn = NewConnectionToFixedRoomsDatabase()
+        conn.ClearUsersFromRoom(join_room_id)
+        conn.UpdateRoomCurrentOnline(join_room_id, 0)
+        conn.CommitToDatabase()
+        conn.CloseConnection()
+        del conn
 
     # Динамические комнаты
     elif call.data == 'roomsunfix':
         markup = types.InlineKeyboardMarkup()
-        btn = btn = types.InlineKeyboardButton(text = f'''[0/10] 15 руб №1''', callback_data = 'roomunfix1')
-        btn1 = types.InlineKeyboardButton(text = f'''[0/10] 15 руб №2''', callback_data = 'roomunfix2')
-        btn2 = types.InlineKeyboardButton(text = f'''[0/10] 30 руб №3''', callback_data = 'roomunfix3')
-        btn3 = types.InlineKeyboardButton(text = f'''[0/10] 50 руб №4''', callback_data = 'roomunfix4')
+        btn = btn = types.InlineKeyboardButton(text = f'''[0/10] 15-50 руб №1''', callback_data = 'roomunfix1')
+        btn1 = types.InlineKeyboardButton(text = f'''[0/10] 15-50 руб №2''', callback_data = 'roomunfix2')
+        btn2 = types.InlineKeyboardButton(text = f'''[0/10] 30-80 руб №3''', callback_data = 'roomunfix3')
+        btn3 = types.InlineKeyboardButton(text = f'''[0/10] 50-100 руб №4''', callback_data = 'roomunfix4')
         btn4 = types.InlineKeyboardButton(text = f'''[0/10] 100 руб №5''', callback_data = 'roomunfix5')
         btn5 = types.InlineKeyboardButton(text = f'''[0/10] 250 руб №6''', callback_data = 'roomunfix6')
         btn6 = types.InlineKeyboardButton(text = f'''[0/10] 500 руб №7''', callback_data = 'roomunfix7')

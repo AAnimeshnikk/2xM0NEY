@@ -176,9 +176,18 @@ class NewConnectionToFixedRoomsDatabase:
             self.__sql_data_executor.execute(change)
         self.__database.commit()
 
-    def AddNewUserToRoom(self, rid, uid, data):
+    def AddNewUserToRoom(self, rid, uid):
+        data = self.GetAllFixedRoomData(rid)[DATA]
         data += "%s " % (uid)
         self.__changes.append("UPDATE RoomsFixed SET data = '%s' WHERE id = %s" % (data, rid))
+
+    def RemoveUserFromRoom(self, rid, uid):
+        data = self.GetAllFixedRoomData(rid)[DATA]
+        data = data.replace("%s " % uid, "")
+        self.__changes.append("UPDATE RoomsFixed SET data = '%s' WHERE id = %s" % (data, rid))
+
+    def ClearUsersFromRoom(self, id):
+        self.__changes.append("UPDATE RoomsFixed SET data = '' WHERE id = %s" % id)
 
     def GetAllUsersFromRoom(self, id):
         self.__sql_data_executor.execute("SELECT data FROM RoomsFixed WHERE id = %s" % id)
@@ -186,8 +195,6 @@ class NewConnectionToFixedRoomsDatabase:
         for user in self.__sql_data_executor.fetchall()[0][0].split():
             data.append(int(user))
         return data
-
-
 
     def CloseConnection(self):
         self.__sql_data_executor.close()

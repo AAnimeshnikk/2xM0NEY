@@ -264,7 +264,6 @@ f'''
         text='✅ Успешно! Теперь видимий никнейм: %s' % showed_name, reply_markup=markup)
 
     elif call.data == "change_user_name":
-        new_user_name = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         markup = types.InlineKeyboardMarkup()
         back = types.InlineKeyboardButton(text='Назад🔙', callback_data='account')
         markup.row(back)
